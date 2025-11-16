@@ -5,11 +5,12 @@
     <title>PiCO Template</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <script src="script.ts" type="module" defer></script>
+    <script src="index.ts" type="module" defer></script>
+
+    <link rel="stylesheet" href="/styles/index.css">
 
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_right" />
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle,add,arrow_right,close,edit,logout" />
 </head>
 
 <body>
@@ -17,18 +18,33 @@
     <header id="header">
 
         <!-- The current/previous routes -->
-        <nav id="route" style="display:flex;align-items:center;">
+        <nav id="route">
             <!-- bergen <span class="material-symbols-outlined">arrow_right</span> test > abcd -->
-            Bergen
+            <span class="route-part">
+                Bergen
+            </span>
         </nav>
 
         <!-- Navigational links dependent on the current location in the site (ontext dependent) -->
         <nav id="context-items">
 
+            <span class="material-symbols-outlined -ctx-hidden" id="ctx-edit" role="button"
+                title="New Category">add</span>
+            <span class="material-symbols-outlined" id="ctx-edit" role="button" title="Edit">edit</span>
+            <span class="material-symbols-outlined" id="ctx-close" role="button" title="Cancel">close</span>
+            <a href="/login" class="material-symbols-outlined -ctx-hidden" id="ctx-login" role="button"
+                title="Login">account_circle</a>
+            <span class="material-symbols-outlined -ctx-hidden" id="ctx-logout" role="button"
+                title="Logout">logout</span>
+
         </nav>
 
     </header>
 
+    <!-- The body element to hold the main content for each page -->
+    <div id="body">
+
+    </div>
 
 
 </body>

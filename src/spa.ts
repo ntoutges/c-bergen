@@ -81,9 +81,9 @@ export async function loadPage(
     }
 
     for (const cb of pageListeners) {
-        cb(path, currRoute, routeData.replacements);
+        cb(routeData.candidate, currRoute, routeData.replacements);
     }
-    currRoute = path;
+    currRoute = routeData.candidate;
 }
 
 /**
@@ -91,14 +91,17 @@ export async function loadPage(
  * @param route The route to retreive
  * @returns     The route entry associated with the route. Null if no entry found.
  */
-function getRouteEntry(
-    route: string
-): { entry: RouteEntry; replacements: Record<string, string> } | null {
+function getRouteEntry(route: string): {
+    entry: RouteEntry;
+    replacements: Record<string, string>;
+    candidate: string;
+} | null {
     // Route directly found
     if (routes.has(route)) {
         return {
             entry: routes.get(route)!,
             replacements: {},
+            candidate: route,
         };
     }
 
@@ -190,6 +193,7 @@ function getRouteEntry(
     return {
         entry: routes.get(subMatch.key)!,
         replacements: subMatch.replacements,
+        candidate: subMatch.key,
     };
 }
 
