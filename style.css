@@ -1,0 +1,33 @@
+@font-face {
+    font-family: "stack";
+    src: url("fonts/Stack_Sans_Notch/static/StackSansNotch-ExtraLight.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    /* Website palette */
+    --p-text: white;
+    --p-emphasis: #8eb8e5;
+    --p-light: #7c99b4;
+    --p-mid: #6b7f82;
+    --p-shade: #5b5750;
+    --p-dark: #492c1d;
+
+    font-family: stack;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0px;
+    padding: 0px;
+    background-color: cornsilk;
+}
+
+#header {
+    background: var(--p-shade);
+    color: var(--p-text);
+    padding: 10px;
+    font-size: 1.2em;
+}
