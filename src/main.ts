@@ -40,7 +40,7 @@ function main() {
     // Manage 'add' button visibility
     unsubscribe = onAuthStateChanged(auth, (user) => {
         document
-            .getElementById("ctx-edit")!
+            .getElementById("ctx-new")!
             .classList.toggle("-ctx-hidden", !user);
     });
 }
@@ -50,6 +50,9 @@ function unload() {
     prevId = null;
 
     unsubscribe?.();
+
+    // Disable new category button
+    document.getElementById("ctx-new")!.classList.add("-ctx-hidden");
 }
 
 // Load new entries into the list
@@ -71,10 +74,6 @@ async function loadList() {
             const when = new Date(doc.lastModified);
             const useDate = when.toDateString() !== new Date().toDateString(); // Use date if on *different* days; Otherwise default to time.
 
-            // Get the email of the user who last modified this
-            const user = (await db.getDoc(`users/${doc.lastModifiedBy}`, false))
-                ?.email;
-
             return {
                 ...doc,
                 cpt: {
@@ -82,7 +81,6 @@ async function loadList() {
                     lastModified: useDate
                         ? when.toLocaleDateString()
                         : when.toLocaleTimeString(),
-                    lastModifiedBy: user,
                 },
             };
         })

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>PiCO Template</title>
+    <title>Bergen Tracker</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="index.ts" type="module" defer></script>
@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/styles/index.css">
 
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle,add,arrow_right,close,edit,logout" />
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle,add,arrow_right,check_circle,close,edit,error,logout" />
 </head>
 
 <body>
@@ -28,10 +28,11 @@
         <!-- Navigational links dependent on the current location in the site (ontext dependent) -->
         <nav id="context-items">
 
-            <span class="material-symbols-outlined -ctx-hidden" id="ctx-edit" role="button"
-                title="New Category">add</span>
-            <span class="material-symbols-outlined" id="ctx-edit" role="button" title="Edit">edit</span>
-            <span class="material-symbols-outlined" id="ctx-close" role="button" title="Cancel">close</span>
+            <a href="/new" class="material-symbols-outlined -ctx-hidden" id="ctx-new" role="button"
+                title="New Category">add</a>
+            <span class="material-symbols-outlined -ctx-hidden" id="ctx-edit" role="button" title="Edit">edit</span>
+            <a href="/" class="material-symbols-outlined -ctx-hidden" id="ctx-close" role="button"
+                title="Cancel">close</a>
             <a href="/login" class="material-symbols-outlined -ctx-hidden" id="ctx-login" role="button"
                 title="Login">account_circle</a>
             <span class="material-symbols-outlined -ctx-hidden" id="ctx-logout" role="button"

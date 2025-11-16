@@ -1,0 +1,244 @@
+#new-category-container {
+    display: flex;
+
+    /* Fill entire space */
+    flex-grow: 1;
+}
+
+.new-category {
+    flex: 1 1 0;
+
+    padding: 20px;
+    flex-wrap: wrap;
+
+    /* Center text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Remove default link styling */
+    color: var(--p-dark);
+    text-decoration: none;
+
+    /* Make text larger */
+    font-size: 4em;
+
+    &:hover {
+        flex-grow: 2;
+        color: var(--p-text);
+    }
+
+    transition: flex-grow 300ms, color 300ms;
+}
+
+.new-category:nth-child(1) {
+    background-color: #6e6c9a;
+}
+
+.new-category:nth-child(2) {
+    background-color: #5a9a65;
+}
+
+#body:has(#new-category-name-container) {
+    background: var(--p-shade);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Main container */
+#new-category-name-container {
+    flex-grow: 1;
+    width: 100%;
+    max-width: 600px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+    box-sizing: border-box;
+
+    gap: 25px;
+}
+
+/* Row containing the input + button */
+#new-category-name-container .category-name-row {
+    display: flex;
+    gap: 10px;
+
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Input styling */
+#new-category-name-container .category-name {
+    flex-grow: 1;
+    padding: 10px 14px;
+
+    border: solid var(--p-mid) 1px;
+
+    /* Pill-shaped */
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+
+    font-family: monospace;
+
+    outline: none;
+    font-size: 1.4em;
+
+    min-width: 0px;
+}
+
+#new-category-name-container .category-name:focus {
+    border-color: var(--p-emphasis);
+}
+
+/* Add button */
+#new-category-name-container .category-add {
+    background: var(--p-emphasis);
+    color: white;
+    border: none;
+
+    /* Pill-shaped */
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+
+    padding: 0 16px;
+
+    font-size: 28px;
+    line-height: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    user-select: none;
+}
+
+#new-category-name-container .category-add:hover {
+    background: var(--p-light);
+}
+
+/* Error text */
+#new-category-name-container .category-error {
+    text-align: center;
+    color: #660000;
+    font-weight: 500;
+    font-size: 1em;
+
+    padding: 10px 15px;
+    background: #ffdddd;
+    border: 1px solid #aa0000;
+    border-radius: 6px;
+
+    width: 100%;
+}
+
+#new-category-name-container .category-error:empty {
+    visibility: hidden; /* hide until needed */
+
+    &::before {
+        content: "&nbsp";
+    }
+}
+
+/* --- STATE ICON BASE --- */
+
+#new-category-name-container .category-name-row {
+    position: relative;
+}
+
+#new-category-name-container .category-status-icon {
+    position: absolute;
+    right: -40px; /* adjust as needed */
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-family: "Material Symbols Outlined";
+    font-size: 28px;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- LOADING --- */
+
+#new-category-name-container .category-name-row.loading::after {
+    content: "";
+    width: 22px;
+    height: 22px;
+
+    border: 3px solid var(--p-emphasis);
+    border-top-color: var(--p-shade);
+    border-radius: 50%;
+
+    position: absolute;
+    right: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    animation: category-spin 0.8s linear infinite;
+
+    position: absolute;
+    right: 80px;
+    user-select: none;
+    pointer-events: none;
+}
+
+@keyframes category-spin {
+    from {
+        transform: translateY(-50%) rotate(0deg);
+    }
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* --- VERIFIED --- */
+
+#new-category-name-container .category-name-row.verified::after {
+    content: "check_circle";
+    font-family: "Material Symbols Outlined";
+
+    color: #0a7f0a; /* green */
+    font-size: 28px;
+
+    position: absolute;
+    right: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    position: absolute;
+    right: 80px;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* --- FAILURE --- */
+
+#new-category-name-container .category-name-row.failure::after {
+    content: "error";
+    font-family: "Material Symbols Outlined";
+
+    color: #b00000; /* red */
+    font-size: 28px;
+
+    position: absolute;
+    right: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    position: absolute;
+    right: 80px;
+    user-select: none;
+    pointer-events: none;
+}

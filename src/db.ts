@@ -373,8 +373,19 @@ function _getDocs(
     return promise;
 }
 
+/**
+ * Dump cache, and force all documents to be refetched
+ */
+function _reload() {
+    docCache.clear();
+    colCache.clear();
+    flushCache.clear();
+}
+
 export default {
     getDoc: _getDoc,
     getDocs: _getDocs,
     setDoc: _setDoc,
+
+    reload: _reload,
 };

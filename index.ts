@@ -6,6 +6,7 @@ import "./src/category.js";
 import "./src/login.js";
 import "./src/signup.js";
 import "./src/forgot.js";
+import "./src/new.js";
 
 // Import styles
 import "./styles/header.css";

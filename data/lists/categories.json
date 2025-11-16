@@ -24,7 +24,7 @@
         "title": "Last Maintiner",
         "setup": {
             "attrs": [],
-            "key": "cpt.lastModifiedBy"
+            "key": "lastModifiedBy"
         }
     }
 ]

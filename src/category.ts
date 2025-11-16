@@ -5,7 +5,12 @@ spa.onPageUnload(unload);
 
 function main(r: Record<string, any>) {
     const category = decodeURIComponent(r.category);
-    console.log(category);
+
+    // Enable edit category button
+    document.getElementById("ctx-edit")!.classList.remove("-ctx-hidden");
 }
 
-function unload() {}
+function unload() {
+    // Disable edit category button
+    document.getElementById("ctx-edit")!.classList.add("-ctx-hidden");
+}

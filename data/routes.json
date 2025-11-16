@@ -12,6 +12,13 @@
         "#body": "/pages/forgot.html"
     },
 
+    "/new": {
+        "#body": "/pages/new_type.html"
+    },
+    "/new/{type}": {
+        "#body": "/pages/new_name.html"
+    },
+
     "/categories/{category}": {
         "#body": "/pages/category.html"
     }
