@@ -1,0 +1,52 @@
+#header {
+    display: flex;
+
+    /* Distinguish header from everything else */
+    background: var(--p-shade);
+    color: var(--p-text);
+    padding: 10px;
+    font-size: 1.2em;
+
+    box-shadow: var(--p-shade) 0 0px 10px 0px;
+}
+
+#route > .route-part {
+    /* Show ellipsis on overflow */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0px;
+
+    /* Make parts appear like buttons */
+    user-select: none;
+    cursor: pointer;
+
+    /* Style on hover */
+    &:hover {
+        color: var(--p-emphasis);
+    }
+}
+
+#context-items {
+    /* Align to the right */
+    margin-left: auto;
+
+    /* Arrange items */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    & > * {
+        color: inherit;
+        text-decoration: none;
+
+        /* Make buttons appear like buttons */
+        user-select: none;
+        cursor: pointer;
+
+        /* Style on hover */
+        &:hover {
+            color: var(--p-emphasis);
+        }
+    }
+}

@@ -1,0 +1,171 @@
+.list {
+    display: grid;
+
+    /* Set maximum width */
+    width: var(--content-width);
+    margin: 0px auto;
+
+    /* Make list view different from the rest */
+    border: solid var(--list-border) 1px;
+    border-top: none;
+
+    background: var(--list-background);
+}
+
+/* Once the screen is skinny enough, allow list to take up all horizontal space */
+@media (max-width: 900px) {
+    .list {
+        width: 100%;
+        border-right: none;
+        border-left: none;
+    }
+}
+
+/* Stype list items */
+.list-entry {
+    display: contents;
+
+    /* Set default color */
+    color: black;
+}
+
+/* Apply padding to items */
+:is(.list-entry, .list-header) > .list-column:first-child {
+    padding-left: 10px;
+}
+:is(.list-entry, .list-header) > .list-column:last-child {
+    padding-right: 10px;
+}
+:is(.list-entry, .list-header) > .list-column {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/* Apply spacing between items */
+:is(.list-entry, .list-header) > :not(:first-child) {
+    padding-left: 5px;
+}
+:is(.list-entry, .list-header) > :not(:last-child) {
+    padding-right: 5px;
+}
+
+/* Add divider between items */
+.list-entry:not(:last-child)::after {
+    content: '';
+    grid-column: -1 / 1;
+
+    margin: 0px 40px;
+    width: calc(100% - 80px);
+
+    border-bottom: solid var(--list-divider-color) 1px;
+}
+
+/* Highlight entries on hover */
+.list-entry:has(:hover) > .list-column {
+    background: var(--list-highlight-bg);
+    color: var(--list-highlight-color);
+
+    /* Fade in immediately */
+    transition: none;
+}
+
+/* Remove divider on hover */
+.list-entry:has(:hover)::after,
+.list-entry:has(+ :hover)::after {
+    visibility: hidden;
+}
+
+/* Center items vertically */
+.list-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Make these elements act more like buttons */
+    user-select: none;
+
+    /* Prevent word-wrap */
+    white-space: nowrap;
+
+    /* Fade out slowly */
+    transition: background 200ms, color 200ms;
+}
+
+/* Indicate that this row can be clicked */
+a > .list-column {
+    cursor: pointer;
+}
+
+
+/* Make "heavy" elements larger (emphasize them more) */
+.list-heavy {
+    font-size: 1.6em;
+}
+
+
+/* List column: Align items beside eachother */
+.list-related {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+
+/* List stack; Align items on top of each other */
+.list-column:has(> .list-stack) {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+/* List stack: Dlement that divides two elements */
+.list-column:has(> .list-divider) {
+    gap: 5px;
+}
+.list-divider {
+    width: 100%;
+    border-bottom: solid black 1px;
+}
+
+/* Allow this element's text to collapse into ellipses */
+.list-column:has(> .list-overflow) {
+    min-width: 0px;
+}
+.list-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
+}
+
+
+
+
+/* Style header */
+.list-header {
+    display: contents;
+}
+
+/* Give header a different color to indicate it is different */
+.list-header > .list-column {
+    background: black;
+    color: white;
+
+    /* Always keep the header in view */
+    position: sticky;
+    top: 0px;
+
+    /* Indicate that this portion is not a button (yet) */
+    cursor: auto;
+}
+
+
+
+/* Addon styling */
+.list-addon-progress {
+    display: flex;
+    background: #ffd5d5;
+}
+.list-addon-progress > * {
+    background: #dcffdc;
+}

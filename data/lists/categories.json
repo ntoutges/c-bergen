@@ -1,0 +1,30 @@
+[
+    {
+        "title": "Category",
+        "setup": {
+            "attrs": ["heavy"],
+            "key": "cpt.category"
+        }
+    },
+    {
+        "title": "Type",
+        "setup": {
+            "attrs": [],
+            "key": "metadata.type"
+        }
+    },
+    {
+        "title": "Last Modified",
+        "setup": {
+            "attrs": [],
+            "key": "cpt.lastModified"
+        }
+    },
+    {
+        "title": "Last Maintiner",
+        "setup": {
+            "attrs": [],
+            "key": "cpt.lastModifiedBy"
+        }
+    }
+]

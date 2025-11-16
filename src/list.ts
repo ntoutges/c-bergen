@@ -1,7 +1,6 @@
 type ListItem = Record<string, any>;
 
 type BaseListColumn = {
-
     /**
      * The attributes ascribed to this level
      */
@@ -9,38 +8,33 @@ type BaseListColumn = {
 };
 
 type RecursiveListColumn = {
-
     /**
      * The list of sub-entries (in order)
      */
     children: ListColumn[];
-
 } & BaseListColumn;
 
 type TerminalListColumn = BaseListColumn & Partial<TerminalListAppend>;
 
 type TerminalListAppendConst = {
-
     /**
      * Add some constant value
      */
     text: string;
     append?: TerminalListAppend;
-}
+};
 type TerminalListAppendValue = {
     /**
      * Add some other value retreived from the document
      */
     key: string;
     append?: TerminalListAppend;
-}
+};
 type TerminalListAppend = TerminalListAppendConst | TerminalListAppendValue;
-
 
 type ListColumn = RecursiveListColumn | TerminalListColumn;
 
 type TopListColumn = {
-    
     /**
      * The text to put into the header
      */
@@ -50,13 +44,13 @@ type TopListColumn = {
      * How much width to give this column.\
      * If not given, width defaults to 'auto'
      */
-    width?: string
-    
+    width?: string;
+
     /**
      * How this column is setup
      */
     setup: ListColumn;
-}
+};
 
 /**
  * All available parts that may come out of a TopListColumn
@@ -77,7 +71,7 @@ type ListCompiledConstant = {
 type ListCompiledValue = {
     type: "value";
     value: string[];
-}
+};
 
 type ListCompiled = ListCompiledConstant | ListCompiledValue;
 
@@ -85,12 +79,11 @@ type ListCompiled = ListCompiledConstant | ListCompiledValue;
  * A list instance that represents the HTML list
  */
 export class List {
-
     /**
      * The list items to render
      */
     private readonly items: ListItem[] = [];
-    
+
     /**
      * The addons used to modify how the list appears
      */
@@ -100,24 +93,35 @@ export class List {
     private readonly path: string;
     private readonly search: URLSearchParams;
 
-    private readonly columns: ({ setup: ListCompiled[], width: string, title: string })[];
+    private readonly columns: {
+        setup: ListCompiled[];
+        width: string;
+        title: string;
+    }[];
 
-    constructor(element: HTMLElement, columns: TopListColumn[], path: string = "") {
+    constructor(
+        element: HTMLElement,
+        columns: TopListColumn[],
+        path: string = ""
+    ) {
         this.element = element;
-        
+
         const searchIndex = path.indexOf("?");
         this.path = searchIndex == -1 ? path : path.substring(0, searchIndex);
-        this.search = new URLSearchParams(searchIndex == -1 ? "" : path.substring(searchIndex));
+        this.search = new URLSearchParams(
+            searchIndex == -1 ? "" : path.substring(searchIndex)
+        );
 
-
-        this.columns = columns.map(column => ({
+        this.columns = columns.map((column) => ({
             setup: this._compile(column),
             width: column.width ?? "auto",
-            title: column.title
+            title: column.title,
         }));
 
         // Setup DOM grid columns
-        this.element.style.gridTemplateColumns = this.columns.map(column => column.width).join(" ");
+        this.element.style.gridTemplateColumns = this.columns
+            .map((column) => column.width)
+            .join(" ");
     }
 
     /**
@@ -125,15 +129,18 @@ export class List {
      * @param column    The column object to compile
      */
     private _compile(column: TopListColumn) {
-        const compiled: ListCompiled[] = [];    // Compiled items to add in-order
-        const compilend: ListCompiled[] = [];   // Compiled items to add to the end of 'compiled' once some block is finished
+        const compiled: ListCompiled[] = []; // Compiled items to add in-order
+        const compilend: ListCompiled[] = []; // Compiled items to add to the end of 'compiled' once some block is finished
 
         const queue: ({ block: true } | ListColumnComponents)[] = [column];
         while (queue.length) {
             const candidate = queue.pop()!;
-            
+
             // One 'block' proerty, indicating that the current block is finished
-            if (Object.keys(candidate).length == 1 && candidate.hasOwnProperty("block")) {
+            if (
+                Object.keys(candidate).length == 1 &&
+                candidate.hasOwnProperty("block")
+            ) {
                 if (compilend.length > 0) compiled.push(compilend.pop()!);
                 continue;
             }
@@ -141,31 +148,49 @@ export class List {
             const type = this._getType(candidate as ListColumnComponents);
 
             const pushAttrs = (attrs: string[]) => {
-                const attributes = attrs.map(attr => `list-${attr}`).join(" ");
+                const attributes = attrs
+                    .map((attr) => `list-${attr}`)
+                    .join(" ");
                 if (attributes.length == 0) return;
 
-                compiled.push({ type: "const", value: `<div class="${attributes}">` });
+                compiled.push({
+                    type: "const",
+                    value: `<div class="${attributes}">`,
+                });
                 compilend.push({ type: "const", value: "</div>" });
-            }
+            };
 
             switch (type) {
                 case "top":
-                    compiled.push({ type: "const", value: `<div class="list-column">` });
+                    compiled.push({
+                        type: "const",
+                        value: `<div class="list-column">`,
+                    });
                     compilend.push({ type: "const", value: `</div>` });
-                    queue.push({ block: true }, (<TopListColumn>candidate).setup);
+                    queue.push(
+                        { block: true },
+                        (<TopListColumn>candidate).setup
+                    );
                     break;
 
                 case "recursive": {
                     const column = candidate as RecursiveListColumn;
-                    pushAttrs(column.attrs)
-                    queue.push({ block: true }, ...column.children.toReversed());
+                    pushAttrs(column.attrs);
+                    queue.push(
+                        { block: true },
+                        ...column.children.toReversed()
+                    );
                     break;
                 }
 
                 case "tvalue": {
-                    const column = candidate as BaseListColumn & TerminalListAppendValue;
+                    const column = candidate as BaseListColumn &
+                        TerminalListAppendValue;
                     pushAttrs(column.attrs);
-                    compiled.push({ type: "value", value: column.key.split(".") });
+                    compiled.push({
+                        type: "value",
+                        value: column.key.split("."),
+                    });
 
                     queue.push({ block: true });
                     if (column.append) queue.push(column.append);
@@ -173,7 +198,8 @@ export class List {
                 }
 
                 case "ttext": {
-                    const column = candidate as BaseListColumn & TerminalListAppendConst;
+                    const column = candidate as BaseListColumn &
+                        TerminalListAppendConst;
                     pushAttrs(column.attrs);
                     compiled.push({ type: "const", value: column.text });
 
@@ -191,7 +217,10 @@ export class List {
 
                 case "value": {
                     const column = candidate as TerminalListAppendValue;
-                    compiled.push({ type: "value", value: column.key.split(".") });
+                    compiled.push({
+                        type: "value",
+                        value: column.key.split("."),
+                    });
 
                     queue.push({ block: true });
                     if (column.append) queue.push(column.append);
@@ -212,12 +241,16 @@ export class List {
             }
         }
 
-        if (compilend.length > 0) console.warn("Improper Compilation; Detected non-emppty compilend list:", compilend)
+        if (compilend.length > 0)
+            console.warn(
+                "Improper Compilation; Detected non-emppty compilend list:",
+                compilend
+            );
         compiled.push(...compilend.toReversed());
-    
+
         // Merge adjacent 'const' elements
         for (let i = 1; i < compiled.length; i++) {
-            const prev = compiled[i-1];
+            const prev = compiled[i - 1];
             const curr = compiled[i];
 
             // Merge!
@@ -235,11 +268,15 @@ export class List {
         const headerComponents: string[] = [];
 
         for (const column of this.columns) {
-            const title = column.title.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Escape title
+            const title = column.title
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;"); // Escape title
             headerComponents.push(`<div class="list-column">${title}</div>`);
         }
 
-        return '<div class="list-header">' + headerComponents.join("") + "</div>"
+        return (
+            '<div class="list-header">' + headerComponents.join("") + "</div>"
+        );
     }
 
     /**
@@ -264,10 +301,11 @@ export class List {
 
         const build = itemComponents.join("");
         if (this.path) {
-
-            const docId = encodeURIComponent((item.__name__ || "").toString())
+            const docId = (item.__name__ || "").toString();
             this.search.set("id", docId);
-            return `<a href="${this.path}?${this.search.toString()}" class="list-entry">${build}</a>`;
+            return `<a href="${
+                this.path
+            }?${this.search.toString()}" class="list-entry">${build}</a>`;
         }
         return `<div class="list-entry">${build}</div>`;
     }
@@ -278,18 +316,18 @@ export class List {
      * @returns         A string representing the column type
      */
     private _getType(column: ListColumnComponents) {
-        if (column.hasOwnProperty("setup")) return "top";           // TopListColumn
-        if (column.hasOwnProperty("children")) return "recursive";  // RecursiveListColumn
+        if (column.hasOwnProperty("setup")) return "top"; // TopListColumn
+        if (column.hasOwnProperty("children")) return "recursive"; // RecursiveListColumn
         if (column.hasOwnProperty("attrs")) {
-            if (column.hasOwnProperty("key")) return "tvalue";      // TerminalListColumn (w/ value)
-            if (column.hasOwnProperty("text")) return "ttext";      // TerminalListColumn (w/ text)
-            return "empty";                                         // TerminalListColumn
+            if (column.hasOwnProperty("key")) return "tvalue"; // TerminalListColumn (w/ value)
+            if (column.hasOwnProperty("text")) return "ttext"; // TerminalListColumn (w/ text)
+            return "empty"; // TerminalListColumn
         }
 
-        if (column.hasOwnProperty("key")) return "value";           // TerminalListAppend (w/ value)
-        if (column.hasOwnProperty("text")) return "text";           // TerminalListAppend (w/ text)
+        if (column.hasOwnProperty("key")) return "value"; // TerminalListAppend (w/ value)
+        if (column.hasOwnProperty("text")) return "text"; // TerminalListAppend (w/ text)
 
-        return "unknown";                                           // ???
+        return "unknown"; // ???
     }
 
     /**
@@ -313,14 +351,10 @@ export class List {
     render() {
         this.element.innerHTML = ""; // Clear element
 
-        const listContents = [
-            this._buildHeader()
-        ];
+        const listContents = [this._buildHeader()];
 
         for (const item of this.items) {
-            listContents.push(
-                this._buildItem(item)
-            );
+            listContents.push(this._buildItem(item));
         }
 
         this.element.innerHTML = listContents.join("\n");
@@ -332,7 +366,7 @@ export class List {
             const columns = rowEl.children;
             for (let col = 0; col < columns.length; col++) {
                 const colEl = columns[col] as HTMLElement;
-                colEl.style.gridRow = (2*row + 2).toString(); // Leave space for dividers
+                colEl.style.gridRow = (2 * row + 2).toString(); // Leave space for dividers
                 colEl.style.gridColumn = (col + 1).toString();
             }
 
@@ -376,10 +410,8 @@ export class List {
     static getValue(obj: ListItem, key: string[]) {
         let temp = obj;
         for (const k of key) {
-            
             // Unable to get value
-            if (!temp || typeof temp != "object")
-                return null;
+            if (!temp || typeof temp != "object") return null;
 
             // Traverse to the next element
             temp = temp[k];
@@ -394,10 +426,9 @@ export class List {
 }
 
 export abstract class ListAddon {
-    
     /** The item that the current row being rendered represents */
     private item: ListItem = {};
-    
+
     /**
      * For internal use only.\
      * Called to render the addon, setting up all necessary information
@@ -407,16 +438,18 @@ export abstract class ListAddon {
         let element = this.render(row);
 
         if (element == null) return; // No value returned, so nothing to do
-        
+
         // Convert HTML string to object
         if (typeof element == "string") {
             const parser = new DOMParser();
-            const el = parser.parseFromString(element, "text/html").querySelector("body > *");
+            const el = parser
+                .parseFromString(element, "text/html")
+                .querySelector("body > *");
 
             if (!(el instanceof HTMLElement)) return;
             element = el;
         }
-        
+
         // Check that row is valid
         const firstColumn = row.children[0];
         if (!(firstColumn instanceof HTMLElement)) return;
@@ -432,7 +465,7 @@ export abstract class ListAddon {
         element.style.gridColumn = gridColumn;
         row.before(element);
     }
-    
+
     /**
      * Render the addon. If an element is returned, it will be inserted into the list, spanning the modified row, before the element in DOM order.
      * @param row   The row to render the addon for.
@@ -454,12 +487,15 @@ export abstract class ListAddon {
     protected getValue(path: string): any {
         if (path == "") return this.item;
 
-        const parts = path.split(".")
+        const parts = path.split(".");
         let temp: any = this.item;
         for (const part of parts) {
-
             // Invalid path
-            if (!temp || typeof temp != "object" || !temp.hasOwnProperty(part)) {
+            if (
+                !temp ||
+                typeof temp != "object" ||
+                !temp.hasOwnProperty(part)
+            ) {
                 temp = null;
                 break;
             }

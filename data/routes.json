@@ -1,8 +1,18 @@
 {
-    "//": {
-        "body": "pages/main.html"
+    "/": {
+        "#body": "/pages/main.html"
     },
-    "//test": {
-        "body": "pages/test.html"
+    "/login": {
+        "#body": "/pages/login.html"
+    },
+    "/signup": {
+        "#body": "/pages/signup.html"
+    },
+    "/forgot-password": {
+        "#body": "/pages/forgot.html"
+    },
+
+    "/categories/{category}": {
+        "#body": "/pages/category.html"
     }
 }

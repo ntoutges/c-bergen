@@ -1,0 +1,109 @@
+@font-face {
+    font-family: "stack";
+    src: url("/fonts/Stack_Sans_Notch/StackSansNotch-VariableFont_wght.ttf");
+    font-weight: 100;
+    font-style: normal;
+}
+
+:root {
+    /* Website palette */
+    --p-text: white;
+    --p-emphasis: #8eb8e5;
+    --p-light: #7c99b4;
+    --p-mid: #6b7f82;
+    --p-shade: #5b5750;
+    --p-dark: #492c1d;
+
+    font-family: stack;
+
+    /* Maximum width the main content of any page will stretch to */
+    --content-width: 800px;
+
+    --list-border: var(--p-dark);
+    --list-background: white;
+    --list-highlight-bg: #eaeaea;
+    --list-highlight-color: #010084;
+    --list-divider-color: var(--p-shade);
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0px;
+    padding: 0px;
+    background: linear-gradient(135deg, var(--p-light), var(--p-mid));
+
+    display: flex;
+    flex-direction: column;
+}
+
+#body {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* Display loading spinner while fetching data */
+.load-on-empty:empty {
+    /* Take up all available space */
+    flex-grow: 1;
+    width: 100% !important;
+    max-width: unset !important;
+
+    justify-content: center;
+    align-items: center;
+
+    /* Expand to full width */
+    box-sizing: border-box;
+    max-width: unset;
+    position: relative;
+
+    background: #0000004d !important;
+}
+
+/* Allow loading animation to take up all available space */
+* :has(> .load-on-empty:empty) {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* Spinner styling */
+.load-on-empty:empty::after {
+    content: "";
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+
+    border: solid black 4px;
+    border-top-color: #c5c5c5;
+
+    /* Make spinner... spin */
+    animation: spinner 1s infinite both;
+}
+
+@keyframes spinner {
+    0% {
+        rotate: 0deg;
+    }
+    100% {
+        rotate: 360deg;
+    }
+}
+
+/* Manage context buttons */
+#context-items .-ctx-hidden {
+    display: none;
+}
+
+#ctx-logout {
+    color: var(--p-light);
+}
