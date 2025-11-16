@@ -10,12 +10,21 @@
     box-shadow: var(--p-shade) 0 0px 10px 0px;
 }
 
+#route {
+    display: flex;
+    align-items: center;
+}
+
 #route > .route-part {
     /* Show ellipsis on overflow */
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     min-width: 0px;
+
+    /* Revert default link styling */
+    color: inherit;
+    text-decoration: none;
 
     /* Make parts appear like buttons */
     user-select: none;

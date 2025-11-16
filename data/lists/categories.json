@@ -9,7 +9,7 @@
     {
         "title": "Type",
         "setup": {
-            "attrs": [],
+            "attrs": ["column"],
             "key": "metadata.type"
         }
     },

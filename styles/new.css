@@ -31,12 +31,16 @@
     transition: flex-grow 300ms, color 300ms;
 }
 
-.new-category:nth-child(1) {
+.new-category.counter {
     background-color: #6e6c9a;
 }
 
-.new-category:nth-child(2) {
+.new-category.timer {
     background-color: #5a9a65;
+}
+
+.new-category.compare {
+    background-color: #8e9463;
 }
 
 #body:has(#new-category-name-container) {

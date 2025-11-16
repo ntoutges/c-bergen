@@ -3,26 +3,25 @@ import { doc, runTransaction } from "firebase/firestore";
 
 import { bind, loadPage } from "./spa.js";
 import { auth, firestore } from "./fb";
-const spaType = bind("/new/{type}");
-spaType.onPageLoad(main);
-spaType.onPageUnload(unload);
-
-import db from "./db.js";
-
-const spaName = bind("/new");
+const spaName = bind("/new/{type}");
 spaName.onPageLoad(mainName);
 spaName.onPageUnload(unloadName);
 
-const validTypes = new Set(["counter", "timer"]);
+import { home } from "..";
+import { setPath } from "./paths";
+
+import db from "./db.js";
+
+const spaType = bind("/new");
+spaType.onPageLoad(mainType);
+spaType.onPageUnload(unloadType);
+
+const validTypes = new Set(["counter", "timer", "compare"]);
+
 let inputElement: HTMLInputElement | null = null;
 let type: string = "";
 
-function main(r: Record<string, any>) {
-    queueMicrotask(() => {
-        // Enable cancel button
-        document.getElementById("ctx-close")!.classList.remove("-ctx-hidden");
-    });
-
+function mainName(r: Record<string, any>) {
     type = decodeURIComponent(r.type);
 
     // Invalid type; Return to chooser
@@ -30,6 +29,25 @@ function main(r: Record<string, any>) {
         loadPage("/new");
         return;
     }
+
+    queueMicrotask(() => {
+        // Enable cancel button
+        document.getElementById("ctx-close")!.classList.remove("-ctx-hidden");
+    });
+
+    setPath(document.getElementById("route")!, [
+        {
+            component: home,
+            path: "/",
+        },
+        {
+            component: "New",
+            path: "/new",
+        },
+        {
+            component: type[0].toUpperCase() + type.slice(1),
+        },
+    ]);
 
     inputElement = document.querySelector<HTMLInputElement>(
         "#new-category-name-container .category-name"
@@ -46,21 +64,31 @@ function main(r: Record<string, any>) {
         });
 }
 
-function unload() {
+function unloadName() {
     loading = false;
 
     // Disable cancel button
     document.getElementById("ctx-close")!.classList.add("-ctx-hidden");
 }
 
-function mainName() {
+function mainType() {
     queueMicrotask(() => {
         // Enable cancel button
         document.getElementById("ctx-close")!.classList.remove("-ctx-hidden");
     });
+
+    setPath(document.getElementById("route")!, [
+        {
+            component: home,
+            path: "/",
+        },
+        {
+            component: "New",
+        },
+    ]);
 }
 
-function unloadName() {
+function unloadType() {
     // Disable cancel button
     document.getElementById("ctx-close")!.classList.add("-ctx-hidden");
 }

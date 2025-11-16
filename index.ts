@@ -32,3 +32,6 @@ onAuthStateChanged(auth, (user) => {
         .getElementById("ctx-logout")!
         .classList.toggle("-ctx-hidden", !user);
 });
+
+// Home text
+export const home = "Bergen";

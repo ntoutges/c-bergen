@@ -11,6 +11,9 @@ import { auth } from "./fb.js";
 
 import db from "./db.js";
 import { ClickAddon } from "./list_addons/click.js";
+import { setPath } from "./paths.js";
+import { home } from "../index.js";
+import { PillIcon } from "./list_addons/pill.js";
 
 const pageSize = 20;
 const col: string = "categories";
@@ -22,6 +25,12 @@ let prevId: string | null = null;
 let unsubscribe: (() => void) | null = null;
 
 function main() {
+    setPath(document.getElementById("route")!, [
+        {
+            component: home,
+        },
+    ]);
+
     list = new List(
         document.querySelector<HTMLElement>(mainElSelector)!,
         config
@@ -34,6 +43,20 @@ function main() {
             loadPage(`/categories/${encodeURIComponent(atob(id))}`)
         )
     );
+
+    // Distinguish type from everything else
+    list.registerAddon(
+        "pill",
+        new PillIcon({
+            column: 2,
+            colors: {
+                counter: "#a19ee5",
+                timer: "#adf7b9",
+                compare: "#cfd791",
+            },
+        })
+    );
+
     loading = false;
     loadList();
 

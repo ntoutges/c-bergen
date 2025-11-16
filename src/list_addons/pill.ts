@@ -3,17 +3,16 @@ import { ListAddon } from "../list.js";
 export class PillIcon extends ListAddon {
     private readonly column: number;
     private readonly colors: Record<string, string>;
-    
+
     constructor({
         column,
-        colors
+        colors,
     }: {
-        
         /** The column to affect */
-        column: number,
+        column: number;
 
         /** Map from text values to the pill color */
-        colors: Record<string, string>
+        colors: Record<string, string>;
     }) {
         super();
 
@@ -22,10 +21,12 @@ export class PillIcon extends ListAddon {
     }
 
     protected render(row: HTMLElement): void {
-        const column = row.querySelector<HTMLElement>(`.list-column:nth-child(${this.column}) > .list-column`);
+        const column = row.querySelector<HTMLElement>(
+            `.list-column:nth-child(${this.column}) > .list-column`
+        );
         if (!column) return;
 
-        const text = column.textContent!.toLowerCase().replace(/\s/g, '');
+        const text = column.textContent!.toLowerCase().replace(/\s/g, "");
         if (!this.colors.hasOwnProperty(text)) return;
 
         column.style.padding = "5px 10px";
