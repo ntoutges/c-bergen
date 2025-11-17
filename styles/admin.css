@@ -1,0 +1,83 @@
+#admin-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+
+    align-items: center;
+}
+
+/* Main container */
+.admin-user-add {
+    display: flex;
+    gap: 10px;
+
+    box-sizing: border-box;
+
+    width: 800px;
+    max-width: 100%;
+}
+
+/* Input styling */
+.admin-user-add #user-add-input {
+    flex-grow: 1;
+    padding: 10px 14px;
+
+    border: solid var(--p-mid) 1px;
+
+    /* Pill-shaped */
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+
+    font-family: monospace;
+
+    outline: none;
+    font-size: 1.4em;
+
+    min-width: 0px;
+}
+
+.admin-user-add #user-add-input:focus {
+    border-color: var(--p-emphasis);
+}
+
+/* User type styling */
+.admin-user-add #user-add-type {
+    border: solid var(--p-mid) 1px;
+    border-radius: 6px;
+    padding: 10px 14px;
+
+    font-size: 1.4em;
+    font-family: monospace;
+}
+
+/* Add button */
+.admin-user-add #user-add-button {
+    background: var(--p-emphasis);
+    color: white;
+    border: none;
+
+    /* Pill-shaped */
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+
+    padding: 0 16px;
+
+    font-size: 28px;
+    line-height: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    user-select: none;
+}
+
+.admin-user-add #user-add-button:hover {
+    background: var(--p-light);
+}

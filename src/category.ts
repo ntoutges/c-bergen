@@ -13,11 +13,12 @@ import { List } from "./list.js";
 import * as counter from "./types/counter.js";
 import * as timer from "./types/timer.js";
 import * as compare from "./types/compare.js";
+
 import db from "./db";
 import { auth } from "./fb";
 import { onAuthStateChanged } from "firebase/auth";
 
-const types = {
+export const types = {
     counter,
     timer,
     // compare,
@@ -61,9 +62,6 @@ async function main() {
             component: category,
         },
     ]);
-
-    // Enable edit category button
-    document.getElementById("ctx-edit")!.classList.remove("-ctx-hidden");
 
     // Fetch the category type
     const doc = await db.getDoc(`/categories/${categoryId}`, false);
@@ -115,36 +113,52 @@ async function main() {
 }
 
 function unload() {
-    // Disable edit category button
-    document.getElementById("ctx-edit")!.classList.add("-ctx-hidden");
     rid = null;
 
     if (unsubscribe) unsubscribe();
 
     // Hide the show button
     document.getElementById("ctx-note")!.classList.add("-ctx-hidden");
+    document.getElementById("ctx-admin")!.classList.add("-ctx-hidden");
 }
 
 // Check if the current user is allowed to edit the document, and if so: show the 'New Entry' button.
 function updateEditable(doc: Record<string, any>, category: string): void {
-    const editable =
-        auth.currentUser &&
-        (doc.metadata?.createdBy === auth.currentUser.email ||
-            (Array.isArray(doc.maintainers) &&
-                doc.maintainers.includes(auth.currentUser.email)));
+    let addable = false;
+    let editable = false;
 
-    const button = document.getElementById("ctx-note")! as HTMLAnchorElement;
-    if (!editable) {
-        button.classList.add("-ctx-hidden");
-        return;
+    // Update permissions based on the logged in user
+    if (auth.currentUser) {
+        const maintainers =
+            doc.maintainers && typeof doc.maintainers === "object"
+                ? doc.maintainers
+                : {};
+
+        addable = ["write", "admin"].includes(
+            maintainers[auth.currentUser.email!]
+        ); // Allowed to add documents
+        editable = ["admin"].includes(maintainers[auth.currentUser.email!]); // Allowed to edit category data
     }
 
-    button.classList.remove("-ctx-hidden");
+    const queryParams = new URLSearchParams({ cat: category });
 
-    // Update the HREF
-    const queryParams = new URLSearchParams({ id: category });
+    const addButton = document.getElementById("ctx-note")! as HTMLAnchorElement;
+    if (addable) {
+        addButton.classList.remove("-ctx-hidden");
+        addButton.href = `/note?${queryParams.toString()}`;
+    } else {
+        addButton.classList.add("-ctx-hidden");
+    }
 
-    button.href = `/note?${queryParams.toString()}`;
+    const editButton = document.getElementById(
+        "ctx-admin"
+    )! as HTMLAnchorElement;
+    if (editable) {
+        editButton.classList.remove("-ctx-hidden");
+        editButton.href = `/admin?${queryParams.toString()}`;
+    } else {
+        editButton.classList.add("-ctx-hidden");
+    }
 }
 
 async function loadList(id: symbol) {
@@ -153,8 +167,9 @@ async function loadList(id: symbol) {
     // Load in initial list data
     const docs = await db.getDocs(col, {
         prevId: prevId ?? undefined,
-        field: "__name__",
+        field: "metadata.createdAt",
         limit: pageSize,
+        reversed: true,
     });
 
     if (!list || !typeModule || id !== rid) return; // Page unloaded while getting documents

@@ -1,8 +1,8 @@
 import "../styles/new.css";
 import { doc, runTransaction } from "firebase/firestore";
+import { auth, firestore } from "./fb.js";
 
 import { bind, loadPage } from "./spa.js";
-import { auth, firestore } from "./fb";
 const spaName = bind("/new/{type}");
 spaName.onPageLoad(mainName);
 spaName.onPageUnload(unloadName);
@@ -144,7 +144,9 @@ async function createCategory(): Promise<string> {
             transaction.set(categoryDoc, {
                 lastModified: now,
                 lastModifiedBy: user.email,
-                maintainers: [],
+                maintainers: {
+                    [user.email!]: "admin",
+                },
                 metadata: {
                     createdAt: now,
                     createdBy: user.email,

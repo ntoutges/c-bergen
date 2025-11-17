@@ -1,0 +1,16 @@
+[
+    {
+        "title": "Email",
+        "setup": {
+            "attrs": [],
+            "key": "__name__"
+        }
+    },
+    {
+        "title": "Role",
+        "setup": {
+            "attrs": ["column"],
+            "key": "value"
+        }
+    }
+]

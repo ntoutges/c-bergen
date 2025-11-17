@@ -13,6 +13,7 @@
 #route {
     display: flex;
     align-items: center;
+    user-select: none;
 }
 
 #route > .route-part {
