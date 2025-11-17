@@ -7,6 +7,8 @@ import "./src/login.js";
 import "./src/signup.js";
 import "./src/forgot.js";
 import "./src/new.js";
+import "./src/note.js";
+import "./src/admin.js";
 
 // Import styles
 import "./styles/header.css";

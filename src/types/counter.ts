@@ -14,6 +14,11 @@ import db from "../db";
 import list from "../../data/lists/counter.json";
 import ribbon from "../../data/ribbons/counter.json";
 
+import _page from "../../public/pages/types/counter.html?raw";
+import { note } from "../note";
+import { loadPage } from "../spa";
+export const page = _page;
+
 /**
  * Generic function used to determine the shape of the ribbon and list
  */
@@ -100,4 +105,59 @@ export function convert(doc: Record<string, any>): Record<string, any> {
                 : when.toLocaleTimeString(),
         },
     };
+}
+
+var count = 1;
+
+/**
+ * Initialize all HTML/resources for the 'new' page.
+ * Assumes the page has already loaded in.
+ */
+export function new_main() {
+    document
+        .getElementById("note-count-up")!
+        .addEventListener("click", updateCount.bind(null, 1));
+    document
+        .getElementById("note-count-down")!
+        .addEventListener("click", updateCount.bind(null, -1));
+    document
+        .getElementById("note-count-value")!
+        .addEventListener("click", submitCount);
+    count = 1;
+}
+
+/**
+ * Release all used resources for the 'new' page
+ */
+export function new_unload() {}
+
+function updateCount(delta: number) {
+    count += delta;
+
+    const output = document.getElementById("note-count-value")!;
+
+    // Update the value element
+    output.textContent = count.toString();
+
+    // Don't allow zero-counts
+    output.classList.toggle("note-disabled", count == 0);
+}
+
+let loading = false;
+function submitCount() {
+    if (count === 0 || loading) return; // Ignore if count is 0 or loading...
+
+    loading = true;
+    note(count)
+        .catch((err) => {
+            // Ignore errors, and act like they never happened!
+            console.error(err);
+        })
+        .finally(() => {
+            const cat = new URLSearchParams(location.search).get("cat");
+            loading = false;
+
+            if (cat === null) loadPage("/");
+            else loadPage(`/category?id=${encodeURIComponent(cat)}`);
+        });
 }

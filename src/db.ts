@@ -154,7 +154,7 @@ function _setDoc(
         // No change to document, so no flush necessary
         if (
             !flushCache.has(fullPath) &&
-            !compare(cachedDoc as document, newDoc)
+            compare(cachedDoc as document, newDoc)
         ) {
             resolve(newDoc);
             return;
@@ -207,7 +207,10 @@ function compare(a: any, b: any) {
 
 type colInfo = {
     docs: { doc: document; snapshot: DocumentSnapshot }[]; // Retreived documents
-    promise?: Promise<document[]>; // Resolves when the current fetch cycle is complete
+    fetch?: {
+        size: number; // The number of documents being fetched
+        promise: Promise<document[]>; // Resolves when the current fetch cycle is complete
+    };
 };
 
 // Cache all retreived collections
@@ -303,8 +306,11 @@ function _getDocs(
     }
 
     // Currently waiting on some documents to fetch...
-    if (dirCache.promise) {
-        throw new Error("TODO: IMPLEMENT"); /** @TODO */
+    if (dirCache.fetch) {
+        // Wait for the current fetch to finish, then attempt to fetch again (or pull from local cahce)
+        return dirCache.fetch!.promise.then(() =>
+            _getDocs(col, pageInfo, filter)
+        );
     }
 
     const promise = new Promise<document[]>(async (resolve) => {
@@ -349,7 +355,7 @@ function _getDocs(
                 if (!docCache.has(fullId))
                     docCache.set(fullId, { ...doc.data(), __name__: fullId });
             }
-            delete dirCache.promise;
+            delete dirCache.fetch;
 
             // Assume all documents have been gathered
             if (snapshot.docs.length != docCount) {
@@ -369,7 +375,10 @@ function _getDocs(
         );
     });
 
-    dirCache.promise = promise;
+    dirCache.fetch = {
+        promise,
+        size: fbLimit,
+    };
     return promise;
 }
 

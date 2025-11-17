@@ -4,6 +4,9 @@ import { Ribbon } from "../ribbon.js";
 import list from "../../data/lists/timer.json";
 import ribbon from "../../data/ribbons/timer.json";
 
+import _page from "../../public/pages/types/compare.html?raw";
+export const page = _page;
+
 /**
  * Generic function used to determine the shape of the ribbon and list
  */
