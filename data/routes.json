@@ -19,7 +19,10 @@
         "#body": "/pages/new_name.html"
     },
 
-    "/categories/{category}": {
+    "/category": {
         "#body": "/pages/category.html"
+    },
+    "/note": {
+        "#body": "/pages/note.html"
     }
 }

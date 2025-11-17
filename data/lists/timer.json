@@ -1,27 +1,20 @@
 [
     {
-        "title": "Category",
+        "title": "Duration",
         "setup": {
             "attrs": ["heavy"],
-            "key": "cpt.category"
+            "key": "cpt.duration"
         }
     },
     {
-        "title": "Type",
-        "setup": {
-            "attrs": ["column"],
-            "key": "metadata.type"
-        }
-    },
-    {
-        "title": "Last Modified",
+        "title": "Recoreded",
         "setup": {
             "attrs": [],
             "key": "cpt.lastModified"
         }
     },
     {
-        "title": "Last Maintainer",
+        "title": "Maintainer",
         "setup": {
             "attrs": [],
             "key": "lastModifiedBy"

@@ -1,48 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <title>Bergen Tracker</title>
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="index.ts" type="module" defer></script>
 
-<head>
-    <title>Bergen Tracker</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="index.ts" type="module" defer></script>
+        <link rel="stylesheet" href="/styles/index.css" />
 
-    <link rel="stylesheet" href="/styles/index.css">
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle,add,add_notes,arrow_right,check_circle,close,edit,error,logout"
+        />
+    </head>
 
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle,add,arrow_right,check_circle,close,edit,error,logout" />
-</head>
+    <body>
+        <header id="header">
+            <!-- The current/previous routes -->
+            <nav id="route"></nav>
 
-<body>
+            <!-- Navigational links dependent on the current location in the site (ontext dependent) -->
+            <nav id="context-items">
+                <a
+                    href="/new"
+                    class="material-symbols-outlined -ctx-hidden"
+                    id="ctx-new"
+                    role="button"
+                    title="New Category"
+                    >add</a
+                >
 
-    <header id="header">
+                <!-- Note that the HREF is set dynamically in 'category.ts' -->
+                <a
+                    href="/note"
+                    class="material-symbols-outlined -ctx-hidden"
+                    id="ctx-note"
+                    role="button"
+                    title="New Entry"
+                    >add_notes</a
+                >
+                <span
+                    class="material-symbols-outlined -ctx-hidden"
+                    id="ctx-edit"
+                    role="button"
+                    title="Edit"
+                    >edit</span
+                >
+                <a
+                    href="/"
+                    class="material-symbols-outlined -ctx-hidden"
+                    id="ctx-close"
+                    role="button"
+                    title="Cancel"
+                    >close</a
+                >
+                <a
+                    href="/login"
+                    class="material-symbols-outlined -ctx-hidden"
+                    id="ctx-login"
+                    role="button"
+                    title="Login"
+                    >account_circle</a
+                >
+                <span
+                    class="material-symbols-outlined -ctx-hidden"
+                    id="ctx-logout"
+                    role="button"
+                    title="Logout"
+                    >logout</span
+                >
+            </nav>
+        </header>
 
-        <!-- The current/previous routes -->
-        <nav id="route"></nav>
-
-        <!-- Navigational links dependent on the current location in the site (ontext dependent) -->
-        <nav id="context-items">
-
-            <a href="/new" class="material-symbols-outlined -ctx-hidden" id="ctx-new" role="button"
-                title="New Category">add</a>
-            <span class="material-symbols-outlined -ctx-hidden" id="ctx-edit" role="button" title="Edit">edit</span>
-            <a href="/" class="material-symbols-outlined -ctx-hidden" id="ctx-close" role="button"
-                title="Cancel">close</a>
-            <a href="/login" class="material-symbols-outlined -ctx-hidden" id="ctx-login" role="button"
-                title="Login">account_circle</a>
-            <span class="material-symbols-outlined -ctx-hidden" id="ctx-logout" role="button"
-                title="Logout">logout</span>
-
-        </nav>
-
-    </header>
-
-    <!-- The body element to hold the main content for each page -->
-    <div id="body">
-
-    </div>
-
-
-</body>
-
+        <!-- The body element to hold the main content for each page -->
+        <div id="body"></div>
+    </body>
 </html>

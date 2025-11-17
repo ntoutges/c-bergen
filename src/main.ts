@@ -20,7 +20,6 @@ const col: string = "categories";
 const mainElSelector = "#list";
 
 let list: List | null = null;
-let loading: boolean = false;
 let prevId: string | null = null;
 let unsubscribe: (() => void) | null = null;
 
@@ -40,7 +39,7 @@ function main() {
     list.registerAddon(
         "click",
         new ClickAddon((id) =>
-            loadPage(`/categories/${encodeURIComponent(atob(id))}`)
+            loadPage(`/category?id=${encodeURIComponent(atob(id))}`)
         )
     );
 
@@ -57,7 +56,6 @@ function main() {
         })
     );
 
-    loading = false;
     loadList();
 
     // Manage 'add' button visibility
@@ -81,7 +79,6 @@ function unload() {
 // Load new entries into the list
 async function loadList() {
     if (!list) throw new Error("List not yet loaded");
-    loading = true;
 
     // Load in initial list data
     const docs = await db.getDocs(col, {
@@ -92,26 +89,23 @@ async function loadList() {
 
     if (!list) return; // Page unloaded while getting documents
 
-    const mdocs = await Promise.all(
-        docs.map(async (doc) => {
-            const when = new Date(doc.lastModified);
-            const useDate = when.toDateString() !== new Date().toDateString(); // Use date if on *different* days; Otherwise default to time.
+    const mdocs = docs.map((doc) => {
+        const when = new Date(doc.lastModified);
+        const useDate = when.toDateString() !== new Date().toDateString(); // Use date if on *different* days; Otherwise default to time.
 
-            return {
-                ...doc,
-                cpt: {
-                    category: atob(doc.__name__),
-                    lastModified: useDate
-                        ? when.toLocaleDateString()
-                        : when.toLocaleTimeString(),
-                },
-            };
-        })
-    );
+        return {
+            ...doc,
+            cpt: {
+                category: atob(doc.__name__),
+                lastModified: useDate
+                    ? when.toLocaleDateString()
+                    : when.toLocaleTimeString(),
+            },
+        };
+    });
 
     list.add(mdocs);
     list.render();
-    loading = false;
 
     // All items fetched
     if (docs.length != pageSize) {

@@ -1,0 +1,35 @@
+[
+    {
+        "title": {
+            "path": "week",
+            "name": "Last Week",
+            "nullish": "/"
+        },
+        "desc": "The number of new counts gathered in the last week.",
+        "subtitle": {
+            "text": "Weekly"
+        }
+    },
+    {
+        "title": {
+            "path": "total",
+            "name": "Count",
+            "nullish": "/"
+        },
+        "desc": "The <b>total</b> recored count.",
+        "subtitle": {
+            "text": "Count"
+        }
+    },
+    {
+        "title": {
+            "path": "cpd",
+            "name": "Counts per day",
+            "nullish": "/"
+        },
+        "desc": "The average number of new counts per day.",
+        "subtitle": {
+            "text": "/ Day"
+        }
+    }
+]

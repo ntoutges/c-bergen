@@ -1,0 +1,35 @@
+[
+    {
+        "title": {
+            "path": "duration",
+            "name": "Duration",
+            "nullish": "/"
+        },
+        "desc": "The total amount of time tracked in this event.",
+        "subtitle": {
+            "text": "Hours"
+        }
+    },
+    {
+        "title": {
+            "path": "average",
+            "name": "Average",
+            "nullish": "/"
+        },
+        "desc": "The average duration of each event.",
+        "subtitle": {
+            "text": "Hr&nbsp;/&nbsp;Evts"
+        }
+    },
+    {
+        "title": {
+            "path": "events",
+            "name": "Events",
+            "nullish": "/"
+        },
+        "desc": "The total number of events tracked in this category.",
+        "subtitle": {
+            "text": "Events"
+        }
+    }
+]

@@ -11,6 +11,7 @@ import { home } from "..";
 import { setPath } from "./paths";
 
 import db from "./db.js";
+import { onAuthStateChanged } from "firebase/auth";
 
 const spaType = bind("/new");
 spaType.onPageLoad(mainType);
@@ -20,6 +21,9 @@ const validTypes = new Set(["counter", "timer", "compare"]);
 
 let inputElement: HTMLInputElement | null = null;
 let type: string = "";
+
+let unsubscribeType: (() => void) | null = null;
+let unsubscribeName: (() => void) | null = null;
 
 function mainName(r: Record<string, any>) {
     type = decodeURIComponent(r.type);
@@ -62,6 +66,8 @@ function mainName(r: Record<string, any>) {
             const message = await createCategory();
             document.querySelector("#category-error")!.textContent = message;
         });
+
+    unsubscribeName = logoutOnNoAuth();
 }
 
 function unloadName() {
@@ -69,6 +75,8 @@ function unloadName() {
 
     // Disable cancel button
     document.getElementById("ctx-close")!.classList.add("-ctx-hidden");
+
+    unsubscribeName?.();
 }
 
 function mainType() {
@@ -86,11 +94,15 @@ function mainType() {
             component: "New",
         },
     ]);
+
+    unsubscribeType = logoutOnNoAuth();
 }
 
 function unloadType() {
     // Disable cancel button
     document.getElementById("ctx-close")!.classList.add("-ctx-hidden");
+
+    unsubscribeType?.();
 }
 
 // Attempt to create the new category
@@ -145,6 +157,8 @@ async function createCategory(): Promise<string> {
         });
     } catch (err) {
         loading = false;
+        row.classList.remove("loading");
+        row.classList.add("failure");
         return (err as Error).message;
     }
     row.classList.remove("loading");
@@ -164,7 +178,14 @@ async function createCategory(): Promise<string> {
 
     // Move to the new category page
     setTimeout(() => {
-        loadPage(`/categories/${encodeURIComponent(category)}`);
+        loadPage(`/category?id=${encodeURIComponent(category)}`);
     }, 1000);
     return "";
+}
+
+function logoutOnNoAuth() {
+    return onAuthStateChanged(auth, (user) => {
+        // Go home if not logged in
+        if (!user) loadPage("/");
+    });
 }

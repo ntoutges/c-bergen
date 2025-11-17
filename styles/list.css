@@ -10,6 +10,8 @@
     border-top: none;
 
     background: var(--list-background);
+
+    overflow: auto;
 }
 
 /* Once the screen is skinny enough, allow list to take up all horizontal space */
@@ -51,7 +53,7 @@
 
 /* Add divider between items */
 .list-entry:not(:last-child)::after {
-    content: '';
+    content: "";
     grid-column: -1 / 1;
 
     margin: 0px 40px;
@@ -96,12 +98,10 @@ a > .list-column {
     cursor: pointer;
 }
 
-
 /* Make "heavy" elements larger (emphasize them more) */
 .list-heavy {
     font-size: 1.6em;
 }
-
 
 /* List column: Align items beside eachother */
 .list-related {
@@ -109,7 +109,6 @@ a > .list-column {
     flex-direction: row;
     gap: 10px;
 }
-
 
 /* List stack; Align items on top of each other */
 .list-column:has(> .list-stack) {
@@ -138,9 +137,6 @@ a > .list-column {
     text-align: center;
 }
 
-
-
-
 /* Style header */
 .list-header {
     display: contents;
@@ -158,8 +154,6 @@ a > .list-column {
     /* Indicate that this portion is not a button (yet) */
     cursor: auto;
 }
-
-
 
 /* Addon styling */
 .list-addon-progress {

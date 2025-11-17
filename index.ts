@@ -11,6 +11,7 @@ import "./src/new.js";
 // Import styles
 import "./styles/header.css";
 import "./styles/list.css";
+import "./styles/ribbon.css";
 
 // Setup spa
 import routes from "./data/routes.json";

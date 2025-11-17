@@ -32,6 +32,7 @@ body {
     margin: 0px;
     padding: 0px;
     background: linear-gradient(135deg, var(--p-light), var(--p-mid));
+    background-repeat: no-repeat;
 
     display: flex;
     flex-direction: column;

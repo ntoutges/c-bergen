@@ -1,0 +1,19 @@
+/* Modify default ribbon styling */
+#overview .ribbon-container {
+    box-shadow: none;
+    background: none;
+
+    font-size: 30px;
+    padding: 20px;
+
+    display: flex;
+    flex-wrap: auto;
+}
+
+#overview .ribbon-item {
+    background: white;
+    border-radius: 20px;
+    padding: 0.8em;
+
+    transition: none;
+}
