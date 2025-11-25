@@ -8,7 +8,7 @@ service cloud.firestore {
       allow read: if true; // Anyone can read this
       allow create: if isValidCreateMetadata(); // Anyone can create a new category, assuming they adhere to the required pattern
       allow update: if isValidUpdateMetadata() || // Ensure document is shaped properly
-        (isLocalAdmin(resource.data) || isGlobalAdmin()); // Only admins allowed to edit the category document
+        (isLocalAdmin(resource.data) || isGlobalAdmin() || (isLocalWriter(resource.data) && isOnlyModifiedChange())); // Only admins allowed to edit the category document
 
       // Events with each category
       match /events/{eventId} {
@@ -45,6 +45,15 @@ service cloud.firestore {
     function isGlobalAdmin() {
       let data = get(/databases/$(database)/documents/groups/admins).data;
       return data != null && email() in data.maintainers && data.maintainers[email()] == "admin";
+    }
+
+    // Check if the only value changed is the lastModified/lastModifiedBy fields within a category document
+    function isOnlyModifiedChange() {
+      let oldData = request.resource.data;
+      let newData = resource.data;
+      return oldData.metadata == newData.metadata &&
+        oldData.maintainers == newData.maintainers &&
+        oldData.archived == newData.archived;
     }
 
     // Ensure that all relevant metadata + lastUpdate is both present and correct
