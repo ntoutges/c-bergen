@@ -42,7 +42,13 @@ function _getDoc(id: string, autofill = true): Promise<document | null> {
         return new Promise(async (resolve) => {
             const doc = cache instanceof Promise ? await cache : cache;
 
-            resolve(!doc ? (autofill ? { __name__: id } : null) : doc);
+            resolve(
+                !doc
+                    ? autofill
+                        ? { __name__: id }
+                        : null
+                    : structuredClone(doc)
+            );
         });
     }
 
@@ -67,7 +73,7 @@ function _getDoc(id: string, autofill = true): Promise<document | null> {
 
         const data = { ...snapshot.data(), __name__: snapshot.id };
         docCache.set(id, data); // Replace cached promise with the document
-        resolve(data);
+        resolve(structuredClone(data));
     });
 
     docCache.set(id, promise);
@@ -156,7 +162,7 @@ function _setDoc(
             !flushCache.has(fullPath) &&
             compare(cachedDoc as document, newDoc)
         ) {
-            resolve(newDoc);
+            resolve(structuredClone(newDoc));
             return;
         }
 
@@ -165,7 +171,7 @@ function _setDoc(
         // Indicate that this document will need to be flushed later
         if (!flush) {
             flushCache.add(fullPath);
-            resolve(newDoc);
+            resolve(structuredClone(newDoc));
             return;
         }
 
@@ -176,7 +182,7 @@ function _setDoc(
         // Update document
         await setDoc(doc(db, fullPath), newDocContents);
 
-        resolve(newDoc);
+        resolve(structuredClone(newDoc));
     });
 }
 
@@ -292,7 +298,7 @@ function _getDocs(
         return Promise.resolve(
             dirCache.docs
                 .slice(startIndex + 1, startIndex + 1 + fbLimit)
-                .map(({ doc }) => doc)
+                .map(({ doc }) => structuredClone(doc))
         );
     }
 
@@ -301,7 +307,7 @@ function _getDocs(
         return Promise.resolve(
             dirCache.docs
                 .slice(startIndex + 1, startIndex + 1 + fbLimit)
-                .map(({ doc }) => doc)
+                .map(({ doc }) => structuredClone(doc))
         );
     }
 
@@ -371,7 +377,7 @@ function _getDocs(
         resolve(
             dirCache.docs
                 .slice(startIndex + 1, startIndex + 1 + fbLimit)
-                .map((db) => db.doc)
+                .map((db) => structuredClone(db.doc))
         );
     });
 

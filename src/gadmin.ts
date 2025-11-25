@@ -1,12 +1,10 @@
-import "../styles/admin.css";
-
 import { onAuthStateChanged } from "firebase/auth";
 import { List } from "./list.js";
 import { auth } from "./fb.js";
 import db from "./db.js";
 
 import { bind, loadPage } from "./spa.js";
-const spa = bind("/admin");
+const spa = bind("/gadmin");
 spa.onPageLoad(main);
 spa.onPageUnload(unload);
 
@@ -15,7 +13,6 @@ import { PillIcon } from "./list_addons/pill.js";
 import { ClickAddon } from "./list_addons/click";
 import { setPath } from "./paths";
 import { home } from "..";
-import { getRole } from "./roles";
 
 const mainElSelector = "#list";
 
@@ -25,17 +22,8 @@ let unsubscribe: (() => void) | null = null;
 let rid: symbol | null = null;
 
 async function main() {
-    // Get category data
-    category = new URLSearchParams(location.search).get("cat");
-
     const id = Symbol("Admin RID");
     rid = id;
-
-    // Redirect home if invalid category
-    if (!category) {
-        loadPage("/");
-        return;
-    }
 
     // Update the path display
     setPath(document.getElementById("route")!, [
@@ -44,20 +32,12 @@ async function main() {
             path: "/",
         },
         {
-            component: category,
-            path: `/category?id=${encodeURIComponent(category)}`,
-        },
-        {
-            component: "admin",
+            component: "Global Admin",
         },
     ]);
 
-    // Attempt to fetch the category document
-    const categoryId = btoa(category);
-    const [doc, adminDoc] = await Promise.all([
-        db.getDoc(`/categories/${categoryId}`, false),
-        db.getDoc("/groups/admins", true),
-    ]);
+    // Attempt to fetch the global admin document
+    const doc = await db.getDoc("/groups/admins", false);
 
     // Invalid category
     if (!doc) {
@@ -67,11 +47,9 @@ async function main() {
 
     // Redirect home if logged out
     unsubscribe = onAuthStateChanged(auth, (user) => {
-        const role = getRole(doc, adminDoc);
-
         // Check if the user is allowed to view this page
-        if (role !== "admin") {
-            loadPage(`/category?id=${encodeURIComponent(category!)}`);
+        if (!user || !doc.maintainers.hasOwnProperty(user.email!)) {
+            loadPage(`/?id=${encodeURIComponent(category!)}`);
             return;
         }
     });
@@ -103,7 +81,7 @@ async function main() {
     );
     list.registerAddon("click", new ClickAddon(fillInputField));
 
-    list.add(await getMaintainerArray(categoryId));
+    list.add(await getGlobalMaintainerArray());
     list.render();
 }
 function unload() {
@@ -126,10 +104,11 @@ function getCurrentUser(): Promise<typeof auth.currentUser> {
     });
 }
 
-async function getMaintainerArray(
-    categoryId: string
-): Promise<{ __name__: string; value: "admin" | "write" }[]> {
-    const doc = await db.getDoc(`/categories/${categoryId}`);
+async function getGlobalMaintainerArray(): Promise<
+    { __name__: string; value: "admin" | "write" }[]
+> {
+    // Read global maintainers document
+    const doc = await db.getDoc(`/groups/admins`);
     if (!doc || !doc.maintainers || typeof doc.maintainers !== "object")
         return [];
 
@@ -166,14 +145,14 @@ async function updatePermissions() {
     const type = typeInput.value;
 
     // Ignore if invalid state
-    if (!auth.currentUser || !email || !category) return;
+    if (!auth.currentUser || !email) return;
 
     // User not allowed to update their own permissions
     if (email === auth.currentUser.email) {
         return;
     }
 
-    const docId = `/categories/${btoa(category)}`;
+    const docId = "/groups/admins";
     const doc = await db.getDoc(docId, false);
 
     // Invalid document
@@ -192,13 +171,13 @@ async function updatePermissions() {
 
     // Clear inputs once finished
     emailInput.value = "";
-    typeInput.value = "write";
+    typeInput.value = "admin";
 
     if (!list) return;
 
     // Update list
     list.reset();
-    list.add(await getMaintainerArray(btoa(category)));
+    list.add(await getGlobalMaintainerArray());
     list.render();
 }
 
@@ -216,17 +195,15 @@ async function fillInputField(email: string) {
     // Get the user's role
     // Note that the underlying db mechanism performs caching, negating the otherwise
     // terrible cost of constantly fetchin this document
-    if (category) {
-        const doc = await db.getDoc(`/categories/${btoa(category)}`);
+    const doc = await db.getDoc("/groups/admins");
 
-        if (
-            doc &&
-            doc.maintainers &&
-            typeof doc.maintainers === "object" &&
-            doc.maintainers.hasOwnProperty(email)
-        ) {
-            role = doc.maintainers[email];
-        }
+    if (
+        doc &&
+        doc.maintainers &&
+        typeof doc.maintainers === "object" &&
+        doc.maintainers.hasOwnProperty(email)
+    ) {
+        role = doc.maintainers[email];
     }
 
     emailInput.value = email;

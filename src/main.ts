@@ -64,6 +64,25 @@ function main() {
             .getElementById("ctx-new")!
             .classList.toggle("-ctx-hidden", !user);
     });
+
+    // Check if thi suser is a global admin
+    db.getDoc("/groups/admins", false).then((doc) => {
+        if (
+            !doc || // Global admin document not found
+            !auth.currentUser || // User not logged in
+            !doc.maintainers ||
+            typeof doc.maintainers !== "object" || // Invalid global admin document
+            !doc.maintainers.hasOwnProperty(auth.currentUser.email!) // User not present in global admin document
+        ) {
+            return;
+        }
+
+        const gAdminButton = document.getElementById(
+            "ctx-admin"
+        )! as HTMLAnchorElement;
+        gAdminButton.classList.remove("-ctx-hidden");
+        gAdminButton.href = "/gadmin"; // Redirect to G(lobal) Admin page
+    });
 }
 
 function unload() {
@@ -74,6 +93,7 @@ function unload() {
 
     // Disable new category button
     document.getElementById("ctx-new")!.classList.add("-ctx-hidden");
+    document.getElementById("ctx-admin")!.classList.add("-ctx-hidden");
 }
 
 // Load new entries into the list

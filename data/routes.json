@@ -12,6 +12,10 @@
         "#body": "/pages/forgot.html"
     },
 
+    "/gadmin": {
+        "#body": "/pages/gadmin.html"
+    },
+
     "/new": {
         "#body": "/pages/new_type.html"
     },

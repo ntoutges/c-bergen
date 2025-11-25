@@ -9,6 +9,7 @@ import "./src/forgot.js";
 import "./src/new.js";
 import "./src/note.js";
 import "./src/admin.js";
+import "./src/gadmin.js";
 
 // Import styles
 import "./styles/header.css";

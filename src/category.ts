@@ -17,6 +17,7 @@ import * as compare from "./types/compare.js";
 import db from "./db";
 import { auth } from "./fb";
 import { onAuthStateChanged } from "firebase/auth";
+import { getRole } from "./roles";
 
 export const types = {
     counter,
@@ -64,7 +65,10 @@ async function main() {
     ]);
 
     // Fetch the category type
-    const doc = await db.getDoc(`/categories/${categoryId}`, false);
+    const [doc, adminDoc] = await Promise.all([
+        db.getDoc(`/categories/${categoryId}`, false),
+        db.getDoc("/groups/admins", true),
+    ]);
     if (id !== rid) return; // No longer need this result
 
     // Go home if invalid document detected
@@ -75,7 +79,7 @@ async function main() {
 
     // Check if allowed to edit document
     unsubscribe = onAuthStateChanged(auth, () => {
-        updateEditable(doc, category);
+        updateEditable(getRole(doc, adminDoc), category);
     });
 
     let type = doc.metadata.type;
@@ -125,22 +129,9 @@ function unload() {
 }
 
 // Check if the current user is allowed to edit the document, and if so: show the 'New Entry' button.
-function updateEditable(doc: Record<string, any>, category: string): void {
-    let addable = false;
-    let editable = false;
-
-    // Update permissions based on the logged in user
-    if (auth.currentUser) {
-        const maintainers =
-            doc.maintainers && typeof doc.maintainers === "object"
-                ? doc.maintainers
-                : {};
-
-        addable = ["write", "admin"].includes(
-            maintainers[auth.currentUser.email!]
-        ); // Allowed to add documents
-        editable = ["admin"].includes(maintainers[auth.currentUser.email!]); // Allowed to edit category data
-    }
+function updateEditable(role: string | null, category: string): void {
+    const addable = role === "write" || role === "admin";
+    const editable = role === "admin";
 
     const queryParams = new URLSearchParams({ cat: category });
 

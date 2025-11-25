@@ -8,6 +8,7 @@ import { bind, loadPage } from "./spa.js";
 import db from "./db.js";
 import { auth } from "./fb.js";
 import { onAuthStateChanged } from "firebase/auth";
+import { getRole } from "./roles.js";
 const spa = bind("/note");
 spa.onPageLoad(main);
 spa.onPageUnload(unload);
@@ -53,12 +54,22 @@ async function main() {
     ]);
 
     // Fetch the category type
-    const doc = await db.getDoc(`/categories/${categoryId}`, false);
+    const [doc, adminDoc] = await Promise.all([
+        db.getDoc(`/categories/${categoryId}`, false),
+        db.getDoc("/groups/admins", true),
+    ]);
     if (id !== rid) return; // No longer need this result
 
     // Go home if invalid document detected
     if (!doc) {
         loadPage("/");
+        return;
+    }
+
+    // Invalid role; Not allowed to add documents
+    const role = getRole(doc, adminDoc);
+    if (!role) {
+        loadPage(`/category?id=${encodeURIComponent(category)}`);
         return;
     }
 
