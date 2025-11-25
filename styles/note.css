@@ -116,10 +116,12 @@
         width: 100%;
     }
 
-    .note-div-left {
+    .note-div-left:has(.note-div-sub),
+    .note-div-right:not(:has(.note-div-sub)) {
         top: 0px;
     }
-    .note-div-right {
+    .note-div-right:has(.note-div-sub),
+    .note-div-left:not(:has(.note-div-sub)) {
         bottom: 0px;
     }
 
