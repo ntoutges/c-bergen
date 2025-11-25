@@ -55,13 +55,17 @@ export async function aggregate(col: string): Promise<any> {
 
     await Promise.all([
         // Get total
-        getAggregateFromServer(c, {
+        getAggregateFromServer(query(c, where("archived", "==", false)), {
             total: sum("data"),
         }).then((aggr) => (data.total = aggr.data().total)),
 
         // Get events in the last week
         getAggregateFromServer(
-            query(c, where("lastModified", ">=", cutoffDate.getTime())),
+            query(
+                c,
+                where("lastModified", ">=", cutoffDate.getTime()),
+                where("archived", "==", false)
+            ),
             {
                 total: sum("data"),
             }
@@ -69,11 +73,15 @@ export async function aggregate(col: string): Promise<any> {
 
         // Get the earliest document for events/time
         db
-            .getDocs(col, {
-                limit: 1,
-                reversed: true,
-                field: "metadata.createdAt",
-            })
+            .getDocs(
+                col,
+                {
+                    limit: 1,
+                    reversed: true,
+                    field: "metadata.createdAt",
+                },
+                ["archived", "==", false]
+            )
             .then(
                 (docs) =>
                     (data.duration = docs.length

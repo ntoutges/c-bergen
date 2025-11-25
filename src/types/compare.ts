@@ -8,7 +8,13 @@ import _page from "../../public/pages/types/compare.html?raw";
 import { note } from "../note";
 import { loadPage } from "../spa";
 import { ProgressAddon } from "../list_addons/progress";
-import { collection, getAggregateFromServer, sum } from "firebase/firestore";
+import {
+    collection,
+    getAggregateFromServer,
+    query,
+    sum,
+    where,
+} from "firebase/firestore";
 import { firestore } from "../fb";
 export const page = _page;
 
@@ -84,7 +90,7 @@ export async function aggregate(col: string): Promise<any> {
 
     await Promise.all([
         // Get total
-        getAggregateFromServer(c, {
+        getAggregateFromServer(query(c, where("archived", "==", false)), {
             a: sum("data.a"),
             b: sum("data.b"),
         }).then((aggr) => {

@@ -5,7 +5,9 @@ import {
     collection,
     count,
     getAggregateFromServer,
+    query,
     sum,
+    where,
 } from "firebase/firestore";
 import { firestore } from "../fb";
 
@@ -48,7 +50,7 @@ export async function aggregate(col: string): Promise<any> {
 
     await Promise.all([
         // Get total
-        getAggregateFromServer(c, {
+        getAggregateFromServer(query(c, where("archived", "==", false)), {
             events: count(),
             duration: sum("data"),
         }).then((aggr) => {
