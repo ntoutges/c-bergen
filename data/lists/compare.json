@@ -1,0 +1,32 @@
+[
+    {
+        "title": "Score",
+        "setup": {
+            "attrs": ["column"],
+            "children": [
+                {
+                    "attrs": ["stack", "heavy"],
+                    "key": "data.a"
+                },
+                {
+                    "attrs": ["stack"],
+                    "key": "data.b"
+                }
+            ]
+        }
+    },
+    {
+        "title": "Recoreded",
+        "setup": {
+            "attrs": [],
+            "key": "cpt.lastModified"
+        }
+    },
+    {
+        "title": "Maintainer",
+        "setup": {
+            "attrs": [],
+            "key": "lastModifiedBy"
+        }
+    }
+]

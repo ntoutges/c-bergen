@@ -30,6 +30,8 @@ export function setup(): {
     };
 }
 
+export function applyPlugins(list: List, ribbon: Ribbon): void {}
+
 /**
  * Generic function used to fill in the created ribbon
  * @param col   The string referring to the collection to read.

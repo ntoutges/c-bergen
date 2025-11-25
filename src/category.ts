@@ -21,7 +21,7 @@ import { onAuthStateChanged } from "firebase/auth";
 export const types = {
     counter,
     timer,
-    // compare,
+    compare,
 };
 
 const pageSize = 20;
@@ -99,6 +99,8 @@ async function main() {
         document.querySelector<HTMLElement>(listElSelector)!,
         listSetup
     );
+
+    typeModule.applyPlugins(list, ribbon);
 
     ribbon.render();
 

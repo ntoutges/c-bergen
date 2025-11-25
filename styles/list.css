@@ -158,8 +158,8 @@ a > .list-column {
 /* Addon styling */
 .list-addon-progress {
     display: flex;
-    background: #ffd5d5;
+    background: var(--list-addon-progress-bg, #ffd5d5);
 }
 .list-addon-progress > * {
-    background: #dcffdc;
+    background: var(--list-addon-progress-fg, #dcffdc);
 }

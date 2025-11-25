@@ -2,6 +2,7 @@
 #note-module {
     height: 100%;
     position: relative;
+    overflow: hidden auto;
 }
 
 /* Generic styling */
@@ -13,6 +14,7 @@
 
     /* Center contents */
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 
@@ -24,8 +26,10 @@
     transition: text-shadow 300ms;
 }
 
-.note-div-left:hover,
-.note-div-right:hover {
+.note-div-left:not(:has(.note-div-sub)):hover,
+.note-div-right:not(:has(.note-div-sub)):hover,
+.note-div-left .note-div-sub:hover,
+.note-div-right .note-div-sub:hover {
     text-shadow: 2px 2px 5px white;
 }
 
@@ -41,6 +45,25 @@
     right: 0px;
     clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);
     background: #707c98;
+}
+
+/* Allow vertical subparts within each note-div */
+.note-div-sub {
+    /* Center contents */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Take up all available space */
+    width: 100%;
+    flex: 1 1 0;
+
+    transition: text-shadow 300ms;
+}
+
+/* Differentiate each vertical subdivision */
+.note-div-sub:nth-child(even) {
+    background: #00000036;
 }
 
 /* Emphasized value between left/right division */

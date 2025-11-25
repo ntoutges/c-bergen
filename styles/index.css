@@ -24,6 +24,9 @@
     --list-highlight-bg: #eaeaea;
     --list-highlight-color: #010084;
     --list-divider-color: var(--p-shade);
+
+    --list-addon-progress-bg: #c9d4ef;
+    --list-addon-progress-fg: #e9c5bb;
 }
 
 body {
