@@ -1,0 +1,67 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Top-level categories
+    match /categories/{categoryId} {
+      allow read: if true; // Anyone can read this
+      allow create: if isValidCreateMetadata(); // Anyone can create a new category, assuming they adhere to the required pattern
+      allow update: if isValidUpdateMetadata() || // Ensure document is shaped properly
+        (isLocalAdmin(resource.data) || isGlobalAdmin()); // Only admins allowed to edit the category document
+
+      // Events with each category
+      match /events/{eventId} {
+        allow read: if true; // Anyone can read this
+        allow create: if isValidCreateMetadata() && // Ensure document is shaped properly
+          (isLocalWriter(get(/databases/$(database)/documents/categories/$(categoryId)).data) || isGlobalAdmin()); // Looser restrictions on how is allowed to write
+        allow update: if isValidUpdateMetadata() && // Ensure document is shaped properly
+          (isLocalWriter(get(/databases/$(database)/documents/categories/$(categoryId)).data) || isGlobalAdmin()); // Looser restrictions on how is allowed to write
+
+      }
+
+    }
+
+    // Control who is allowed to read/write the global admin document
+    match /groups/admins {
+      allow read: if true; // Anyone can read this
+      allow update: if isGlobalAdmin(); // Only admins allowed to update this document
+    }
+
+    function email() {
+      return request.auth.token.email;
+    }
+
+    // Check if admin in current document
+    function isLocalAdmin(data) {
+      return email() in data.maintainers && data.maintainers[email()] == "admin";
+    }
+
+    function isLocalWriter(data) {
+      return email() in data.maintainers && (data.maintainers[email()] == "admin" || data.maintainers[email()] == "write");
+    }
+
+    // Check if admin in global document
+    function isGlobalAdmin() {
+      let data = get(/databases/$(database)/documents/groups/admins).data;
+      return data != null && email() in data.maintainers && data.maintainers[email()] == "admin";
+    }
+
+    // Ensure that all relevant metadata + lastUpdate is both present and correct
+    function isValidCreateMetadata() {
+      let data = request.resource.data;
+      return data.metadata.createdBy == email() && // User must list themselves as the creator
+        data.metadata.createdAt != null && // Want a timestamp for when this document was created
+        (data.maintainers[email()] == "admin" || data.maintainers[email()] == "write"); // User must allow themselves to edit this document
+    }
+
+    function isValidUpdateMetadata() {
+      let oldData = request.resource.data;
+      let newData = resource.data;
+      return data.metadata == newData.metadata && // Metadata not allowed to change
+        oldData.maintainers[email()] == newData.maintainers[email()] && // User not allowed to change their maintainer status
+        newData.lastModifiedBy == email() && // User must list themselves as the last modifier
+        newData.lastModified > oldData.lastModified
+    }
+  }
+}

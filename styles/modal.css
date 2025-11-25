@@ -1,0 +1,90 @@
+/* ---------- Modal Backdrop ---------- */
+.modal-backdrop {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-backdrop.modal-hidden {
+    display: none;
+}
+
+/* ---------- Modal Container ---------- */
+.modal-box {
+    background: white;
+    width: 350px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: modal-fadeIn 0.2s ease-out;
+}
+
+@keyframes modal-fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ---------- Typography ---------- */
+.modal-title {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.modal-text {
+    font-size: 14px;
+    color: #333;
+}
+
+/* ---------- Input ---------- */
+.modal-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* ---------- Button Row ---------- */
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+    gap: 10px;
+}
+
+/* ---------- Buttons ---------- */
+.modal-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-btn-cancel {
+    background: #eee;
+}
+
+.modal-btn-delete {
+    background: #e53935;
+    color: white;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Becomes enabled when JS adds .modal-enabled */
+.modal-btn-delete.modal-enabled {
+    opacity: 1;
+    pointer-events: auto;
+}

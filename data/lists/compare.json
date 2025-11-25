@@ -16,7 +16,7 @@
         }
     },
     {
-        "title": "Recoreded",
+        "title": "Recorded",
         "setup": {
             "attrs": [],
             "key": "cpt.lastModified"

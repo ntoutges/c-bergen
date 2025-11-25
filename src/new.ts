@@ -147,6 +147,7 @@ async function createCategory(): Promise<string> {
                 maintainers: {
                     [user.email!]: "admin",
                 },
+                archived: false,
                 metadata: {
                     createdAt: now,
                     createdBy: user.email,

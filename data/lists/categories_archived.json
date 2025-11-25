@@ -1,0 +1,37 @@
+[
+    {
+        "title": "Category",
+        "setup": {
+            "attrs": ["heavy"],
+            "key": "cpt.category"
+        }
+    },
+    {
+        "title": "Type",
+        "setup": {
+            "attrs": ["column"],
+            "key": "metadata.type"
+        }
+    },
+    {
+        "title": "Archived",
+        "setup": {
+            "attrs": ["column"],
+            "key": "archived"
+        }
+    },
+    {
+        "title": "Last Modified",
+        "setup": {
+            "attrs": [],
+            "key": "cpt.lastModified"
+        }
+    },
+    {
+        "title": "Last Maintainer",
+        "setup": {
+            "attrs": [],
+            "key": "lastModifiedBy"
+        }
+    }
+]

@@ -56,6 +56,9 @@ function login(e: Event) {
             case "auth/invalid-credential":
                 message = "Invalid Credentials";
                 break;
+            case "auth/user-not-found":
+                message = "User not found";
+                break;
         }
 
         // Display the error

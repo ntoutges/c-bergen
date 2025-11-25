@@ -5,6 +5,7 @@ spa.onPageUnload(unload);
 
 import { List } from "./list.js";
 import config from "../data/lists/categories.json";
+import configArchived from "../data/lists/categories_archived.json";
 
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./fb.js";
@@ -22,6 +23,7 @@ const mainElSelector = "#list";
 let list: List | null = null;
 let prevId: string | null = null;
 let unsubscribe: (() => void) | null = null;
+let viewArchived = false;
 
 function main() {
     setPath(document.getElementById("route")!, [
@@ -30,9 +32,11 @@ function main() {
         },
     ]);
 
+    viewArchived = !!new URLSearchParams(location.search).get("archived");
+
     list = new List(
         document.querySelector<HTMLElement>(mainElSelector)!,
-        config
+        viewArchived ? configArchived : config
     );
 
     // Load new page on click
@@ -55,6 +59,19 @@ function main() {
             },
         })
     );
+
+    if (viewArchived) {
+        list.registerAddon(
+            "archived",
+            new PillIcon({
+                column: 3,
+                colors: {
+                    true: "#d9d9d9",
+                    false: "#c0f8ff",
+                },
+            })
+        );
+    }
 
     loadList();
 
@@ -101,11 +118,15 @@ async function loadList() {
     if (!list) throw new Error("List not yet loaded");
 
     // Load in initial list data
-    const docs = await db.getDocs(col, {
-        prevId: prevId ?? undefined,
-        field: "__name__",
-        limit: pageSize,
-    });
+    const docs = await db.getDocs(
+        col,
+        {
+            prevId: prevId ?? undefined,
+            field: "__name__",
+            limit: pageSize,
+        },
+        viewArchived ? undefined : ["archived", "==", false]
+    );
 
     if (!list) return; // Page unloaded while getting documents
 
@@ -132,7 +153,7 @@ async function loadList() {
         prevId = null;
         return;
     }
-    prevId = docs[docs.length - 1].id;
+    prevId = docs[docs.length - 1].__name__;
 
     const bodyEl = document.querySelector<HTMLElement>(mainElSelector);
     if (!bodyEl) return; // How did you get here?

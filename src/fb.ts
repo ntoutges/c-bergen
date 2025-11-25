@@ -18,4 +18,11 @@ export const firestore = getFirestore(app);
 export const auth = getAuth(app);
 
 // connectFirestoreEmulator(firestore, "localhost", 8080);
-// connectAuthEmulator(auth, "localhost:9099");
+// connectAuthEmulator(auth, "http://127.0.0.1:9099");
+
+// // _DEV_
+// import * as fs from "firebase/firestore";
+// // @ts-ignore
+// window.fs = fs;
+// // @ts-ignore
+// window.firestore = firestore;

@@ -108,11 +108,15 @@ export async function note(data: any) {
         null,
         {
             data: data,
+            archived: false,
             lastModified: now,
             lastModifiedBy: user.email,
             metadata: {
                 createdAt: now,
                 createdBy: user.email,
+            },
+            maintainers: {
+                [user.email!]: "write",
             },
         },
         {

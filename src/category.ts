@@ -18,6 +18,8 @@ import db from "./db";
 import { auth } from "./fb";
 import { onAuthStateChanged } from "firebase/auth";
 import { getRole } from "./roles";
+import { confirmDelete } from "./modal";
+import { ClickAddon } from "./list_addons/click";
 
 export const types = {
     counter,
@@ -35,12 +37,15 @@ let ribbon: Ribbon | null = null;
 let list: List | null = null;
 let typeModule: (typeof types)[keyof typeof types] | null = null;
 let unsubscribe: (() => void) | null = null;
+let category: string | null;
+let viewArchived = false;
 
 let col: string = "";
 let prevId: string | null = null;
 
 async function main() {
-    const category = new URLSearchParams(location.search).get("id");
+    category = new URLSearchParams(location.search).get("id");
+    viewArchived = !!new URLSearchParams(location.search).get("archived");
 
     // Invalid category given; Go home...
     if (!category) {
@@ -64,6 +69,14 @@ async function main() {
         },
     ]);
 
+    // Listen for category deletions/restores
+    document
+        .getElementById("ctx-delete")!
+        .addEventListener("click", deleteCategory);
+    document
+        .getElementById("ctx-restore")!
+        .addEventListener("click", restoreCategory);
+
     // Fetch the category type
     const [doc, adminDoc] = await Promise.all([
         db.getDoc(`/categories/${categoryId}`, false),
@@ -79,7 +92,7 @@ async function main() {
 
     // Check if allowed to edit document
     unsubscribe = onAuthStateChanged(auth, () => {
-        updateEditable(getRole(doc, adminDoc), category);
+        updateEditable(getRole(doc, adminDoc), category!, doc);
     });
 
     let type = doc.metadata.type;
@@ -126,10 +139,16 @@ function unload() {
     // Hide the show button
     document.getElementById("ctx-note")!.classList.add("-ctx-hidden");
     document.getElementById("ctx-admin")!.classList.add("-ctx-hidden");
+    document.getElementById("ctx-delete")!.classList.add("-ctx-hidden");
+    document.getElementById("ctx-restore")!.classList.add("-ctx-hidden");
 }
 
 // Check if the current user is allowed to edit the document, and if so: show the 'New Entry' button.
-function updateEditable(role: string | null, category: string): void {
+function updateEditable(
+    role: string | null,
+    category: string,
+    doc: Record<string, any>
+): void {
     const addable = role === "write" || role === "admin";
     const editable = role === "admin";
 
@@ -139,6 +158,11 @@ function updateEditable(role: string | null, category: string): void {
     if (addable) {
         addButton.classList.remove("-ctx-hidden");
         addButton.href = `/note?${queryParams.toString()}`;
+
+        // Allower adders to delete notes
+        if (list) {
+            list.registerAddon("delete", new ClickAddon(deleteNote));
+        }
     } else {
         addButton.classList.add("-ctx-hidden");
     }
@@ -146,8 +170,12 @@ function updateEditable(role: string | null, category: string): void {
     const editButton = document.getElementById(
         "ctx-admin"
     )! as HTMLAnchorElement;
+    const deleteRestoreButton = document.getElementById(
+        doc.archived ? "ctx-restore" : "ctx-delete"
+    )! as HTMLAnchorElement;
     if (editable) {
         editButton.classList.remove("-ctx-hidden");
+        deleteRestoreButton.classList.remove("-ctx-hidden");
         editButton.href = `/admin?${queryParams.toString()}`;
     } else {
         editButton.classList.add("-ctx-hidden");
@@ -158,12 +186,16 @@ async function loadList(id: symbol) {
     if (!list) throw new Error("List not yet loaded");
 
     // Load in initial list data
-    const docs = await db.getDocs(col, {
-        prevId: prevId ?? undefined,
-        field: "metadata.createdAt",
-        limit: pageSize,
-        reversed: true,
-    });
+    const docs = await db.getDocs(
+        col,
+        {
+            prevId: prevId ?? undefined,
+            field: "metadata.createdAt",
+            limit: pageSize,
+            reversed: true,
+        },
+        viewArchived ? undefined : ["archived", "==", false]
+    );
 
     if (!list || !typeModule || id !== rid) return; // Page unloaded while getting documents
 
@@ -177,11 +209,86 @@ async function loadList(id: symbol) {
         prevId = null;
         return;
     }
-    prevId = docs[docs.length - 1].id;
+    prevId = docs[docs.length - 1].__name__;
 
     const bodyEl = document.querySelector<HTMLElement>(listElSelector);
     if (!bodyEl) return; // How did you get here?
 
     // Need to load more elements in if at bottom of the list
     if (List.isAtBottom(bodyEl)) loadList(id);
+}
+
+function deleteCategory() {
+    if (category === null) return;
+
+    confirmDelete(document.getElementById("delete-modal")!, category)
+        .then(async () => {
+            if (category === null || !auth.currentUser) return;
+
+            // Mark category as 'archived', so data is never lost
+            const docId = `/categories/${btoa(category)}`;
+            const doc = await db.getDoc(docId, false);
+            if (!doc) return; // Invalid doc
+
+            doc.archived = true;
+            doc.lastModifiedBy = auth.currentUser.email!;
+            doc.lastModified = new Date().getTime();
+
+            await db.setDoc(docId, doc);
+            db.reload();
+            loadPage("/"); // Go home
+        })
+        .catch(() => {}); // Do nothing on cancel
+}
+
+async function deleteNote(id: string) {
+    if (category === null) return;
+
+    const docId = `/categories/${btoa(category)}/events/${id}`;
+
+    const doc = await db.getDoc(docId, false);
+    if (!doc || !auth.currentUser) return; // Invalid document/user
+
+    confirmDelete(
+        document.getElementById("delete-note-modal")!,
+        `< ${JSON.stringify(doc.data)} > by ${doc.metadata.createdBy}`,
+        doc.metadata.createdBy
+    )
+        .then(async () => {
+            if (!auth.currentUser) return; // Ignore if the user logged out
+
+            // Archive document
+            doc.archived = true;
+            doc.lastModifiedBy = auth.currentUser.email!;
+            doc.lastModified = new Date().getTime();
+            await db.setDoc(docId, doc);
+
+            // Reset loaded list info
+            db.reload();
+            prevId = null;
+
+            if (list && rid) {
+                list.reset();
+                loadList(rid);
+            }
+        })
+        .catch(() => {}); // Do nothing on cancel
+}
+
+async function restoreCategory() {
+    if (category === null || !auth.currentUser) return;
+
+    const docId = `/categories/${btoa(category)}`;
+    const doc = await db.getDoc(docId, false);
+    if (!doc) return;
+
+    // Restore document to original (non-archived) state
+    doc.archived = false;
+    doc.lastModifiedBy = auth.currentUser.email!;
+    doc.lastModified = new Date().getTime();
+    await db.setDoc(docId, doc);
+
+    // Go back to the home page
+    db.reload();
+    loadPage("/");
 }
