@@ -80,25 +80,27 @@ function main() {
         document
             .getElementById("ctx-new")!
             .classList.toggle("-ctx-hidden", !user);
-    });
 
-    // Check if thi suser is a global admin
-    db.getDoc("/groups/admins", false).then((doc) => {
-        if (
-            !doc || // Global admin document not found
-            !auth.currentUser || // User not logged in
-            !doc.maintainers ||
-            typeof doc.maintainers !== "object" || // Invalid global admin document
-            !doc.maintainers.hasOwnProperty(auth.currentUser.email!) // User not present in global admin document
-        ) {
-            return;
-        }
+        // Check if this user is a global admin
+        db.getDoc("/groups/admins", false).then((doc) => {
+            const gAdminButton = document.getElementById(
+                "ctx-admin"
+            )! as HTMLAnchorElement;
 
-        const gAdminButton = document.getElementById(
-            "ctx-admin"
-        )! as HTMLAnchorElement;
-        gAdminButton.classList.remove("-ctx-hidden");
-        gAdminButton.href = "/gadmin"; // Redirect to G(lobal) Admin page
+            if (
+                !doc || // Global admin document not found
+                !auth.currentUser || // User not logged in
+                !doc.maintainers ||
+                typeof doc.maintainers !== "object" || // Invalid global admin document
+                !doc.maintainers.hasOwnProperty(auth.currentUser.email!) // User not present in global admin document
+            ) {
+                gAdminButton.classList.add("-ctx-hidden");
+                return;
+            }
+
+            gAdminButton.classList.remove("-ctx-hidden");
+            gAdminButton.href = "/gadmin"; // Redirect to G(lobal) Admin page
+        });
     });
 }
 

@@ -2,12 +2,11 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
     // Top-level categories
     match /categories/{categoryId} {
       allow read: if true; // Anyone can read this
       allow create: if isValidCreateMetadata(); // Anyone can create a new category, assuming they adhere to the required pattern
-      allow update: if isValidUpdateMetadata() || // Ensure document is shaped properly
+      allow update: if isValidUpdateMetadata() && // Ensure document is shaped properly
         (isLocalAdmin(resource.data) || isGlobalAdmin() || (isLocalWriter(resource.data) && isOnlyModifiedChange())); // Only admins allowed to edit the category document
 
       // Events with each category
@@ -65,12 +64,16 @@ service cloud.firestore {
     }
 
     function isValidUpdateMetadata() {
-      let oldData = request.resource.data;
-      let newData = resource.data;
-      return data.metadata == newData.metadata && // Metadata not allowed to change
-        oldData.maintainers[email()] == newData.maintainers[email()] && // User not allowed to change their maintainer status
+      let newData = request.resource.data;
+      let oldData = resource.data;
+
+      return oldData.metadata == newData.metadata && // Metadata not allowed to change
+        (
+          (!(email() in oldData.maintainers) && !(email() in newData.maintainers)) || // Either user isn't maintainer
+          oldData.maintainers[email()] == newData.maintainers[email()]                // or user's maintainer status didn't change
+        ) &&
         newData.lastModifiedBy == email() && // User must list themselves as the last modifier
-        newData.lastModified > oldData.lastModified
+        newData.lastModified > 0;
     }
   }
 }

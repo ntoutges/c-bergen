@@ -184,6 +184,11 @@ async function updatePermissions() {
         doc.maintainers = {};
     }
 
+    // Ensure document's lastModified field stays updated
+    doc.lastModified = new Date().getTime();
+
+    console.log(doc.lastModified);
+
     // Add/remove user based on type option
     if (type === "remove") delete doc.maintainers[email];
     else doc.maintainers[email] = type;

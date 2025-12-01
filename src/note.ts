@@ -100,29 +100,48 @@ export async function note(data: any) {
     const now = new Date().getTime();
     const user = auth.currentUser;
 
+    const categoryPath = `categories/${btoa(category)}`;
+
     // Preflight check: document must be created by a user
     // Rely on firestore for actual permissions check
     if (!user) throw new Error("Not authorized");
 
-    await db.setDoc(
-        null,
-        {
-            data: data,
-            archived: false,
-            lastModified: now,
-            lastModifiedBy: user.email,
-            metadata: {
-                createdAt: now,
-                createdBy: user.email,
+    // Get the category document
+    const categoryDoc = await db.getDoc(categoryPath, false);
+
+    // Invalid category; Ignore!
+    if (!categoryDoc) return;
+
+    // Cache last update information
+    // (Anyone allowed to modify this data...)
+    categoryDoc.lastModified = now;
+    categoryDoc.lastModifiedBy = user.email;
+
+    await Promise.all([
+        // Update the base category document
+        db.setDoc(categoryPath, categoryDoc),
+
+        // Create the new note document
+        db.setDoc(
+            null,
+            {
+                data: data,
+                archived: false,
+                lastModified: now,
+                lastModifiedBy: user.email,
+                metadata: {
+                    createdAt: now,
+                    createdBy: user.email,
+                },
+                maintainers: {
+                    [user.email!]: "write",
+                },
             },
-            maintainers: {
-                [user.email!]: "write",
-            },
-        },
-        {
-            collection: `categories/${btoa(category)}/events`,
-        }
-    );
+            {
+                collection: `${categoryPath}/events`,
+            }
+        ),
+    ]);
 
     db.reload();
 }

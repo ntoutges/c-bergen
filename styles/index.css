@@ -46,6 +46,7 @@ body {
 
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 
 /* Display loading spinner while fetching data */
