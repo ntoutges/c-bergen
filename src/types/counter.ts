@@ -77,7 +77,7 @@ export async function aggregate(col: string): Promise<any> {
                 col,
                 {
                     limit: 1,
-                    reversed: true,
+                    reversed: false,
                     field: "metadata.createdAt",
                 },
                 ["archived", "==", false]
