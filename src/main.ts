@@ -36,15 +36,15 @@ function main() {
 
     list = new List(
         document.querySelector<HTMLElement>(mainElSelector)!,
-        viewArchived ? configArchived : config
+        viewArchived ? configArchived : config,
     );
 
     // Load new page on click
     list.registerAddon(
         "click",
         new ClickAddon((id) =>
-            loadPage(`/category?id=${encodeURIComponent(atob(id))}`)
-        )
+            loadPage(`/category?id=${encodeURIComponent(atob(id))}`),
+        ),
     );
 
     // Distinguish type from everything else
@@ -57,7 +57,7 @@ function main() {
                 timer: "#adf7b9",
                 compare: "#cfd791",
             },
-        })
+        }),
     );
 
     if (viewArchived) {
@@ -69,11 +69,19 @@ function main() {
                     true: "#d9d9d9",
                     false: "#c0f8ff",
                 },
-            })
+            }),
         );
     }
 
     loadList();
+
+    document
+        .querySelector<HTMLElement>(mainElSelector)!
+        .addEventListener("scroll", function () {
+            if (prevId !== null && List.isAtBottom(this)) {
+                loadList();
+            }
+        });
 
     // Manage 'add' button visibility
     unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -84,7 +92,7 @@ function main() {
         // Check if this user is a global admin
         db.getDoc("/groups/admins", false).then((doc) => {
             const gAdminButton = document.getElementById(
-                "ctx-admin"
+                "ctx-admin",
             )! as HTMLAnchorElement;
 
             if (
@@ -127,7 +135,7 @@ async function loadList() {
             field: "__name__",
             limit: pageSize,
         },
-        viewArchived ? undefined : ["archived", "==", false]
+        viewArchived ? undefined : ["archived", "==", false],
     );
 
     if (!list) return; // Page unloaded while getting documents

@@ -102,14 +102,14 @@ export class List {
     constructor(
         element: HTMLElement,
         columns: TopListColumn[],
-        path: string = ""
+        path: string = "",
     ) {
         this.element = element;
 
         const searchIndex = path.indexOf("?");
         this.path = searchIndex == -1 ? path : path.substring(0, searchIndex);
         this.search = new URLSearchParams(
-            searchIndex == -1 ? "" : path.substring(searchIndex)
+            searchIndex == -1 ? "" : path.substring(searchIndex),
         );
 
         this.columns = columns.map((column) => ({
@@ -169,7 +169,7 @@ export class List {
                     compilend.push({ type: "const", value: `</div>` });
                     queue.push(
                         { block: true },
-                        (<TopListColumn>candidate).setup
+                        (<TopListColumn>candidate).setup,
                     );
                     break;
 
@@ -178,7 +178,7 @@ export class List {
                     pushAttrs(column.attrs);
                     queue.push(
                         { block: true },
-                        ...column.children.toReversed()
+                        ...column.children.toReversed(),
                     );
                     break;
                 }
@@ -244,7 +244,7 @@ export class List {
         if (compilend.length > 0)
             console.warn(
                 "Improper Compilation; Detected non-emppty compilend list:",
-                compilend
+                compilend,
             );
         compiled.push(...compilend.toReversed());
 
@@ -294,7 +294,7 @@ export class List {
                 }
 
                 itemComponents.push(
-                    (List.getValue(item, setup.value) ?? "/").toString()
+                    (List.getValue(item, setup.value) ?? "/").toString(),
                 );
             }
         }

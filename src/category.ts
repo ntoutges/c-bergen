@@ -110,11 +110,11 @@ async function main() {
 
     ribbon = new Ribbon(
         document.querySelector<HTMLElement>(overviewElSelector)!,
-        ribbonSetup
+        ribbonSetup,
     );
     list = new List(
         document.querySelector<HTMLElement>(listElSelector)!,
-        listSetup
+        listSetup,
     );
 
     typeModule.applyPlugins(list, ribbon);
@@ -128,7 +128,16 @@ async function main() {
         ribbon.render();
     });
 
+    prevId = null;
     loadList(id);
+
+    document
+        .querySelector<HTMLElement>(listElSelector)!
+        .addEventListener("scroll", function () {
+            if (prevId !== null && List.isAtBottom(this)) {
+                loadList(id);
+            }
+        });
 }
 
 function unload() {
@@ -147,7 +156,7 @@ function unload() {
 function updateEditable(
     role: string | null,
     category: string,
-    doc: Record<string, any>
+    doc: Record<string, any>,
 ): void {
     const addable = role === "write" || role === "admin";
     const editable = role === "admin";
@@ -168,10 +177,10 @@ function updateEditable(
     }
 
     const editButton = document.getElementById(
-        "ctx-admin"
+        "ctx-admin",
     )! as HTMLAnchorElement;
     const deleteRestoreButton = document.getElementById(
-        doc.archived ? "ctx-restore" : "ctx-delete"
+        doc.archived ? "ctx-restore" : "ctx-delete",
     )! as HTMLAnchorElement;
     if (editable) {
         editButton.classList.remove("-ctx-hidden");
@@ -194,7 +203,7 @@ async function loadList(id: symbol) {
             limit: pageSize,
             reversed: true,
         },
-        viewArchived ? undefined : ["archived", "==", false]
+        viewArchived ? undefined : ["archived", "==", false],
     );
 
     if (!list || !typeModule || id !== rid) return; // Page unloaded while getting documents
@@ -252,7 +261,7 @@ async function deleteNote(id: string) {
     confirmDelete(
         document.getElementById("delete-note-modal")!,
         `< ${JSON.stringify(doc.data)} > by ${doc.metadata.createdBy}`,
-        doc.metadata.createdBy
+        doc.metadata.createdBy,
     )
         .then(async () => {
             if (!auth.currentUser) return; // Ignore if the user logged out
