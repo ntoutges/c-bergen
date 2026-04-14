@@ -99,7 +99,7 @@ function getTimeString(time: number) {
 }
 
 let timeStart: number | null = null;
-let timeStop: number | null = null;
+let delta: number = 0; // Delta time recorded (Allows for pausing between start/stop)
 let running = false;
 let loading = false;
 
@@ -119,7 +119,7 @@ export function new_main() {
         .addEventListener("click", submitTimer);
 
     timeStart = null;
-    timeStop = null;
+    delta = 0;
     running = false;
 }
 
@@ -150,7 +150,11 @@ function toggleTimer(force: boolean | null) {
     } else timerEl.classList.remove("note-disabled");
 
     // Keep track of when paused
-    timeStop = running ? null : new Date().getTime();
+    if (!running && timeStart != null) {
+        const now = new Date().getTime();
+        delta += now - timeStart;
+        timeStart = null;
+    }
 
     // Start animation loop
     updateTimerDisplay();
@@ -158,6 +162,7 @@ function toggleTimer(force: boolean | null) {
 
 function resetTimer() {
     timeStart = null;
+    delta = 0;
 
     // Reset timer
     toggleTimer(false);
@@ -168,12 +173,12 @@ function updateTimerDisplay() {
     requestAnimationFrame(updateTimerDisplay);
 
     const now = new Date().getTime();
-    const delta = now - timeStart;
+    const currDelta = delta + (now - timeStart);
 
-    const hours = Math.floor(delta / 3600000);
-    const minutes = Math.floor(delta / 60000) % 60;
-    const seconds = Math.floor(delta / 1000) % 60;
-    const ds = Math.floor(delta / 100) % 10; // Deciseconds (10th of a second)
+    const hours = Math.floor(currDelta / 3600000);
+    const minutes = Math.floor(currDelta / 60000) % 60;
+    const seconds = Math.floor(currDelta / 1000) % 60;
+    const ds = Math.floor(currDelta / 100) % 10; // Deciseconds (10th of a second)
 
     const minStr = minutes.toString().padStart(2, "0");
     const secStr = seconds.toString().padStart(2, "0");
@@ -203,9 +208,8 @@ function submitTimer() {
     // Solidify stop time
     if (running) toggleTimer(false);
 
-    if (!timeStart || !timeStop) return;
+    if (delta == 0) return;
 
-    const delta = timeStop - timeStart;
     loading = true;
     note(delta)
         .catch((err) => console.error(err))
