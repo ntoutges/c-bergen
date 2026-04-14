@@ -15,7 +15,7 @@ import list from "../../data/lists/timer.json";
 import ribbon from "../../data/ribbons/timer.json";
 
 import _page from "../../public/pages/types/timer.html?raw";
-import { note } from "../note";
+import { note, openModal } from "../note";
 import { loadPage } from "../spa";
 export const page = _page;
 
@@ -210,14 +210,20 @@ function submitTimer() {
 
     if (delta == 0) return;
 
-    loading = true;
-    note(delta)
-        .catch((err) => console.error(err))
-        .finally(() => {
-            const cat = new URLSearchParams(location.search).get("cat");
-            loading = false;
+    const seconds = Math.round(delta / 100) / 10; // Round to nearest tenth of a second
 
-            if (cat === null) loadPage("/");
-            else loadPage(`/category?id=${encodeURIComponent(cat)}`);
-        });
+    openModal({ seconds }).then((result) => {
+        if (!result) return;
+
+        loading = true;
+        note(result.seconds * 1000) // Convert seconds to ms
+            .catch((err) => console.error(err))
+            .finally(() => {
+                const cat = new URLSearchParams(location.search).get("cat");
+                loading = false;
+
+                if (cat === null) loadPage("/");
+                else loadPage(`/category?id=${encodeURIComponent(cat)}`);
+            });
+    });
 }

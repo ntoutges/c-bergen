@@ -9,4 +9,35 @@
 </div>
 
 <!-- Display of the current count -->
-<div class="note-div-mid" id="note-count-value" title="Submit">1</div>
+<div class="note-div-mid note-submit-target" id="note-count-value" title="Submit">
+    1
+</div>
+
+<div class="modal-backdrop  modal-hidden" id="note-refine-modal">
+    <div class="modal-box note-refine-box">
+        <div class="modal-title">Refine Note</div>
+        <div class="modal-text">
+            Review this entry before saving and add any helpful context.
+        </div>
+
+        <div class="note-refine-preview" id="note-refine-summary">
+            <input class="modal-input-inline" style="margin-top: 0px;" inputmode="numeric" id="note-refine-count">
+            counts
+        </div>
+
+        <!-- <label class="note-refine-field">
+            <span class="note-refine-label">Details</span>
+            <textarea class="modal-input note-refine-textarea" id="note-refine-notes" rows="4"
+                placeholder="Optional notes about this entry"></textarea>
+        </label> -->
+
+        <div class="modal-buttons">
+            <div class="modal-btn modal-btn-cancel" id="note-refine-cancel">
+                Cancel
+            </div>
+            <div class="modal-btn note-refine-save" id="note-refine-save">
+                Save Note
+            </div>
+        </div>
+    </div>
+</div>

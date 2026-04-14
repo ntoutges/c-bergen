@@ -1,40 +1,52 @@
 <!-- Button to decrement count -->
 <div class="note-div-left" style="flex-direction: column">
-    <span
-        id="increment-left"
-        title="Increment Side A"
-        class="note-div-sub material-symbols-outlined"
-        style="font-size: 3em"
-        >north</span
-    >
-    <span
-        id="decrement-left"
-        title="Decrement Side A"
-        class="note-div-sub material-symbols-outlined"
-        style="font-size: 3em"
-        >south</span
-    >
+    <span id="increment-left" title="Increment Side A" class="note-div-sub material-symbols-outlined"
+        style="font-size: 3em">north</span>
+    <span id="decrement-left" title="Decrement Side A" class="note-div-sub material-symbols-outlined"
+        style="font-size: 3em">south</span>
 </div>
 
 <!-- Button to increment count -->
 <div class="note-div-right">
-    <span
-        id="increment-right"
-        title="Increment Side B"
-        class="note-div-sub material-symbols-outlined"
-        style="font-size: 3em"
-        >north</span
-    >
-    <span
-        id="decrement-right"
-        title="Decrement Side B"
-        class="note-div-sub material-symbols-outlined"
-        style="font-size: 3em"
-        >south</span
-    >
+    <span id="increment-right" title="Increment Side B" class="note-div-sub material-symbols-outlined"
+        style="font-size: 3em">north</span>
+    <span id="decrement-right" title="Decrement Side B" class="note-div-sub material-symbols-outlined"
+        style="font-size: 3em">south</span>
 </div>
 
 <!-- Display of the current count -->
-<div class="note-div-mid note-disabled" id="note-count-value" title="Submit">
+<div class="note-div-mid note-div-mid-wide note-disabled note-submit-target" id="note-count-value" title="Submit"
+    data-submit-hint="Click to refine + save">
     0 : 0
+</div>
+
+<div class="modal-backdrop modal-hidden" id="note-refine-modal">
+    <div class="modal-box note-refine-box">
+        <div class="modal-title">Refine Note</div>
+        <div class="modal-text">
+            Review this entry before saving and add any helpful context.
+        </div>
+
+        <div class="note-refine-preview" id="note-refine-summary">
+            <input class="modal-input-inline" style="margin-top: 0px;" inputmode="numeric" id="note-refine-countA">
+            :
+            <input class="modal-input-inline" style="margin-top: 0px;" inputmode="numeric" id="note-refine-countB">
+            counts
+        </div>
+
+        <!-- <label class="note-refine-field">
+            <span class="note-refine-label">Details</span>
+            <textarea class="modal-input note-refine-textarea" id="note-refine-notes" rows="4"
+                placeholder="Optional notes about this entry"></textarea>
+        </label> -->
+
+        <div class="modal-buttons">
+            <div class="modal-btn modal-btn-cancel" id="note-refine-cancel">
+                Cancel
+            </div>
+            <div class="modal-btn note-refine-save" id="note-refine-save">
+                Save Note
+            </div>
+        </div>
+    </div>
 </div>

@@ -9,6 +9,35 @@
 </div>
 
 <!-- Timer display (taps to submit) -->
-<div class="note-div-mid note-disabled" id="note-timer-display" title="Submit">
+<div class="note-div-mid note-disabled note-submit-target" id="note-timer-display">
     00:00.0
+</div>
+
+<div class="modal-backdrop modal-hidden" id="note-refine-modal">
+    <div class="modal-box note-refine-box">
+        <div class="modal-title">Refine Note</div>
+        <div class="modal-text">
+            Review this entry before saving and add any helpful context.
+        </div>
+
+        <div class="note-refine-preview" id="note-refine-summary">
+            <input class="modal-input-inline" style="margin-top: 0px;" inputmode="decimal" id="note-refine-seconds">
+            seconds
+        </div>
+
+        <!-- <label class="note-refine-field">
+            <span class="note-refine-label">Details</span>
+            <textarea class="modal-input note-refine-textarea" id="note-refine-notes" rows="4"
+                placeholder="Optional notes about this entry"></textarea>
+        </label> -->
+
+        <div class="modal-buttons">
+            <div class="modal-btn modal-btn-cancel" id="note-refine-cancel">
+                Cancel
+            </div>
+            <div class="modal-btn note-refine-save" id="note-refine-save">
+                Save Note
+            </div>
+        </div>
+    </div>
 </div>

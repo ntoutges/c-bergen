@@ -1,3 +1,5 @@
+@import "./modal.css";
+
 /* Take up full space */
 #note-module {
     height: 100%;
@@ -81,30 +83,114 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    gap: 0.35em;
+    text-align: center;
 
-    font-size: 4vw;
+    font-size: clamp(1.4rem, 4vw, 3rem);
 
     background: var(--p-emphasis);
     border-radius: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.45);
+    box-shadow:
+        0 16px 32px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
 
-    height: 10vw;
-    min-width: 10vw;
-    padding: 0.3em;
+    min-height: 10vw;
+    min-width: 12vw;
+    padding: 0.55em 0.85em;
 
     user-select: none;
     cursor: pointer;
 
-    transition: box-shadow 300ms;
+    transition:
+        box-shadow 300ms,
+        transform 300ms,
+        border-color 300ms;
+}
+
+.note-submit-target::before {
+    content: "Submit";
+    font-size: clamp(0.7rem, 0.28em, 0.95rem);
+    line-height: 1;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.note-submit-target::after {
+    content: "Refine/Submit";
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.18);
+    font-size: clamp(0.72rem, 0.22em, 0.95rem);
+    line-height: 1.2;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    padding: 0.5em 1em;
+}
+
+.note-div-mid-wide {
+    min-width: 16vw;
 }
 
 .note-div-mid:not(.note-disabled):hover {
-    box-shadow: 2px 2px 4px white;
+    border-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 22px 40px rgba(0, 0, 0, 0.3);
+    transform: scale(1.03);
 }
 
 .note-div-mid.note-disabled {
     cursor: not-allowed;
     background: var(--p-shade);
     opacity: 0.7;
+}
+
+.note-div-mid.note-disabled::after {
+    opacity: 0.7;
+}
+
+.note-refine-box {
+    width: min(460px, calc(100vw - 32px));
+}
+
+.note-refine-preview {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #f4f1ed;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+    color: #3c2f2a;
+
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8ch;
+}
+
+.note-refine-field {
+    display: block;
+    margin-top: 14px;
+}
+
+.note-refine-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #55423a;
+}
+
+.note-refine-textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.note-refine-save {
+    background: var(--p-mid);
+    color: white;
+    user-select: none;
 }
 
 /* Reorganize if too narrow */
@@ -127,10 +213,39 @@
 
     /* Stop this from shrinking */
     .note-div-mid {
-        height: 10vh;
+        min-height: 110px;
         width: 50vw !important;
         min-width: 200px;
         max-width: 100vw;
-        font-size: 5vh !important;
+        font-size: clamp(1.6rem, 6vw, 2.4rem) !important;
+        /* padding-bottom: 2.1em; */
+    }
+
+    .note-submit-target::before {
+        font-size: 0.78rem;
+    }
+
+    .note-submit-target::after {
+        font-size: 0.82rem;
+        bottom: 0.8em;
+        max-width: calc(100% - 24px);
+        white-space: normal;
+    }
+
+    .note-refine-box {
+        padding: 18px;
+    }
+
+    .modal-title {
+        font-size: 1.2rem;
+    }
+
+    .modal-text,
+    .note-refine-label,
+    .modal-input,
+    .modal-input-inline,
+    .note-refine-preview,
+    .modal-btn {
+        font-size: 1rem;
     }
 }

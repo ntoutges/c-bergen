@@ -5,7 +5,7 @@ import list from "../../data/lists/compare.json";
 // import ribbon from "../../data/ribbons/compare.json";
 
 import _page from "../../public/pages/types/compare.html?raw";
-import { note } from "../note";
+import { note, openModal } from "../note";
 import { loadPage } from "../spa";
 import { ProgressAddon } from "../list_addons/progress";
 import {
@@ -69,7 +69,7 @@ export function applyPlugins(list: List, ribbon: Ribbon): void {
             progress: "cpt.progress",
             min: 0,
             max: 1,
-        })
+        }),
     );
 }
 
@@ -203,20 +203,24 @@ function updateCount(deltaA: number, deltaB: number) {
 function submitCount() {
     if ((countA === 0 && countB === 0) || loading) return; // Ignore if count is 0 or loading...
 
-    loading = true;
-    note({
-        a: countA,
-        b: countB,
-    })
-        .catch((err) => {
-            // Ignore errors, and act like they never happened!
-            console.error(err);
-        })
-        .finally(() => {
-            const cat = new URLSearchParams(location.search).get("cat");
-            loading = false;
+    openModal({ countA, countB }).then((result) => {
+        if (result === null) return; // Modal was cancelled, so do nothing
 
-            if (cat === null) loadPage("/");
-            else loadPage(`/category?id=${encodeURIComponent(cat)}`);
-        });
+        loading = true;
+        note({
+            a: result.countA,
+            b: result.countB,
+        })
+            .catch((err) => {
+                // Ignore errors, and act like they never happened!
+                console.error(err);
+            })
+            .finally(() => {
+                const cat = new URLSearchParams(location.search).get("cat");
+                loading = false;
+
+                if (cat === null) loadPage("/");
+                else loadPage(`/category?id=${encodeURIComponent(cat)}`);
+            });
+    });
 }

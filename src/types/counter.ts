@@ -15,7 +15,7 @@ import list from "../../data/lists/counter.json";
 import ribbon from "../../data/ribbons/counter.json";
 
 import _page from "../../public/pages/types/counter.html?raw";
-import { note } from "../note";
+import { note, openModal } from "../note";
 import { loadPage } from "../spa";
 export const page = _page;
 
@@ -64,11 +64,11 @@ export async function aggregate(col: string): Promise<any> {
             query(
                 c,
                 where("lastModified", ">=", cutoffDate.getTime()),
-                where("archived", "==", false)
+                where("archived", "==", false),
             ),
             {
                 total: sum("data"),
-            }
+            },
         ).then((aggr) => (data.week = aggr.data().total)),
 
         // Get the earliest document for events/time
@@ -80,13 +80,13 @@ export async function aggregate(col: string): Promise<any> {
                     reversed: false,
                     field: "metadata.createdAt",
                 },
-                ["archived", "==", false]
+                ["archived", "==", false],
             )
             .then(
                 (docs) =>
                     (data.duration = docs.length
                         ? new Date().getTime() - docs[0].metadata.createdAt
-                        : 0)
+                        : 0),
             ),
     ]);
 
@@ -157,17 +157,21 @@ let loading = false;
 function submitCount() {
     if (count === 0 || loading) return; // Ignore if count is 0 or loading...
 
-    loading = true;
-    note(count)
-        .catch((err) => {
-            // Ignore errors, and act like they never happened!
-            console.error(err);
-        })
-        .finally(() => {
-            const cat = new URLSearchParams(location.search).get("cat");
-            loading = false;
+    openModal({ count }).then((result) => {
+        if (!result) return; // Modal was cancelled
 
-            if (cat === null) loadPage("/");
-            else loadPage(`/category?id=${encodeURIComponent(cat)}`);
-        });
+        loading = true;
+        note(result.count)
+            .catch((err) => {
+                // Ignore errors, and act like they never happened!
+                console.error(err);
+            })
+            .finally(() => {
+                const cat = new URLSearchParams(location.search).get("cat");
+                loading = false;
+
+                if (cat === null) loadPage("/");
+                else loadPage(`/category?id=${encodeURIComponent(cat)}`);
+            });
+    });
 }
