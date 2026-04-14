@@ -139,7 +139,7 @@ export async function note(data: any) {
             },
             {
                 collection: `${categoryPath}/events`,
-            }
+            },
         ),
     ]);
 

@@ -2,12 +2,13 @@
     "compilerOptions": {
         "target": "esnext",
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "sourceMap": true,
         "outDir": "dist",
         "strict": true,
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "types": ["vite/client"]
     }
 }
