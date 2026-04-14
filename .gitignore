@@ -1,2 +1,4 @@
+.firestore/
 node_modules/
 dist/
+firestore-debug.log
