@@ -208,8 +208,8 @@ function submitCount() {
 
         loading = true;
         note({
-            a: result.countA,
-            b: result.countB,
+            a: +result.countA,
+            b: +result.countB,
         })
             .catch((err) => {
                 // Ignore errors, and act like they never happened!

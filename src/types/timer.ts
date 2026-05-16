@@ -216,7 +216,7 @@ function submitTimer() {
         if (!result) return;
 
         loading = true;
-        note(result.seconds * 1000) // Convert seconds to ms
+        note(+result.seconds * 1000) // Convert seconds to ms
             .catch((err) => console.error(err))
             .finally(() => {
                 const cat = new URLSearchParams(location.search).get("cat");

@@ -52,6 +52,7 @@ export async function aggregate(col: string): Promise<any> {
     // 7 days ago (1 week)
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - 7);
+    console.log(cutoffDate.getTime(), new Date().getTime());
 
     await Promise.all([
         // Get total
@@ -161,7 +162,7 @@ function submitCount() {
         if (!result) return; // Modal was cancelled
 
         loading = true;
-        note(result.count)
+        note(+result.count)
             .catch((err) => {
                 // Ignore errors, and act like they never happened!
                 console.error(err);
